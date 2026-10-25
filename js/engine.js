@@ -172,7 +172,7 @@
     return 'FRAGMENTS — ' + title + ' ' + st + ' en ' + fmtTime(elapsedSec) + ', ' + tail;
   }
 
-  // ---- Dossier du jour (PWA seulement : Engine.kt n'a pas de mode du jour) ----
+  // ---- Dossier du jour (même logique que engine/Daily.kt de l'appli Android 2.0) ----
   const DAILY_URL = 'https://fragments-jeu.github.io/';
   const DAILY_CELLS = ['🟩', '🟨', '🟧', '🟥'];
 
