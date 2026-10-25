@@ -1,7 +1,7 @@
 /* FRAGMENTS — application (vanilla JS, hors ligne, sans serveur). */
 (function () {
   'use strict';
-  const E = window.FragEngine, D = window.FragDocs, A = window.FragAudio, Q = window.FragQR;
+  const E = window.FragEngine, D = window.FragDocs, A = window.FragAudio, Q = window.FragQR, J = window.Defi;
   const $app = document.getElementById('app');
   const esc = D.esc;
   const cap = (t) => (t ? t.charAt(0).toUpperCase() + t.slice(1) : t);
@@ -36,7 +36,9 @@
     bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
     star: '<path d="M12 2l2.9 6.9l7.1.6l-5.4 4.7l1.7 7.3L12 17.6l-6.3 3.9l1.7-7.3L2 9.5l7.1-.6z"/>',
     scan: '<path d="M3 8V4h4M17 4h4v4M21 16v4h-4M7 20H3v-4M3 12h18"/>',
-    resume: '<path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4"/><path d="M12 8v4l3 2"/>'
+    resume: '<path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4"/><path d="M12 8v4l3 2"/>',
+    flame: '<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-3.8 2.5-5c.3 1.6 1 2.6 2 3c.4-2.6-.4-5.4.5-8z"/>',
+    daily: '<path d="M4 7h16v13H4zM4 7l2-3h12l2 3"/><path d="M9 12h6M9 16h4"/>'
   };
   const icon = (n, cls) => '<svg viewBox="0 0 24 24" aria-hidden="true" ' + (cls ? 'class="' + cls + '"' : '') + '>' + IC[n] + '</svg>';
   const glyphSvg = (n) => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + D.glyphPath(n) + '"/></svg>';
@@ -57,6 +59,18 @@
     return g;
   }
   function plain(g) { const o = Object.assign({}, g); delete o._sc; delete o._setup; return o; }
+
+  // ---------- dossier du jour (logique commune : js/defi.js) ----------
+  const JEU = 'fragments';
+  const dailyOf = (t) => E.dailyPick(INDEX.scenarios, J.seed(JEU, t.key));
+  const flame = (n) => (n > 0 ? '<span class="flame">' + icon('flame') + n + '</span>' : '');
+  const plural = (n, w) => n + ' ' + w + (n > 1 ? 's' : '');
+  function untilMidnight() { // minuit de Paris = 22 h UTC l'été, 23 h l'hiver
+    const p = J.parisDate(), a = Date.UTC(p.y, p.m - 1, p.d + 1) - 7200000;
+    const m = Math.max(1, Math.ceil(((J.parisDate(a).key !== p.key ? a : a + 3600000) - Date.now()) / 60000));
+    return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && view.name === 'home' && INDEX) go('home'); });
 
   // ---------- chrono ----------
   function elapsed(g) { return g.elapsedBefore + (g.paused || !g.runningSince ? 0 : (Date.now() - g.runningSince) / 1000); }
@@ -113,28 +127,37 @@
       '<p class="subtitle">Chacun tient une pièce du dossier. Personne ne s\'en sortira seul.</p></div>' +
       '<nav class="folders">' + resume +
       '<button class="folder" data-act="create"><b>Créer une partie</b><span>Ce téléphone devient le maître du jeu</span>' + icon('lock') + '</button>' +
+      dailyFolder() +
       '<button class="folder" data-act="join"><b>Rejoindre</b><span>Avec le code ou le QR du maître du jeu</span>' + icon('join') + '</button>' +
       '</nav>' +
       '<div class="minor"><button data-act="solo">' + icon('solo') + 'Mode test solo</button><button data-act="howto">' + icon('help') + 'Comment jouer</button><button data-act="settings">' + icon('gear') + 'Réglages</button></div>' +
       '</main>';
   };
 
+  function dailyFolder() {
+    const t = J.today(), sc = dailyOf(t).scenario, done = J.load(JEU).jours[t.key];
+    const etat = done ? 'fait ✓' + (done.score ? ' ' + '★'.repeat(E.stars(done.score, false)) : '') : 'à faire';
+    return '<button class="folder daily" data-act="daily"><b>Dossier du jour</b><span>#' + t.n + ' · ' + esc(sc.title) + ' · ' + etat + flame(J.serie(JEU, t)) + '</span>' +
+      icon('daily') + '<i class="stamp" aria-hidden="true">N° ' + t.n + '</i></button>';
+  }
+
   // ---- création ----
   let draft = { scenarioId: 'bunker', players: 4, solo: false };
   SCREENS.create = () => {
-    const dossiers = INDEX.scenarios.map((s) => '<button class="dossier" data-theme="' + s.theme + '" data-pick="' + s.id + '" aria-pressed="' + (draft.scenarioId === s.id) + '">' +
+    const dossiers = INDEX.scenarios.filter((s) => !draft.defi || s.id === draft.scenarioId).map((s) => '<button class="dossier" data-theme="' + s.theme + '" data-pick="' + s.id + '" aria-pressed="' + (draft.scenarioId === s.id) + '">' +
       '<span class="seal">' + glyphSvg(THEME_GLYPH[s.theme]) + '</span><b>' + esc(s.title) + '</b><i>' + esc(s.tagline) + '</i><small>' + s.year + ' — difficulté ' + '●'.repeat(s.difficulty) + '○'.repeat(3 - s.difficulty) + '</small></button>').join('');
     const counts = [3, 4, 5, 6].map((n) => '<button data-n="' + n + '" aria-pressed="' + (draft.players === n) + '">' + n + '</button>').join('');
-    return '<main class="screen">' + topbar(draft.solo ? 'Mode test solo' : 'Nouvelle partie', 'home') +
-      '<div class="label" style="margin-top:4px">Scénario</div><div class="dossiers">' + dossiers + '</div>' +
+    const jour = draft.solo && !draft.defi ? '<button class="btn ghost" data-act="daily" style="margin-top:12px">' + icon('daily') + ' Dossier du jour #' + J.today().n + '</button>' : '';
+    return '<main class="screen">' + topbar(draft.defi ? 'Dossier du jour #' + draft.defi.n : draft.solo ? 'Mode test solo' : 'Nouvelle partie', 'home') +
+      '<div class="label" style="margin-top:4px">' + (draft.defi ? 'Scénario du jour, le même pour tous' : 'Scénario') + '</div><div class="dossiers">' + dossiers + '</div>' + jour +
       '<div class="label">Nombre de joueurs' + (draft.solo ? ' simulés' : '') + '</div><div class="counter" role="group" aria-label="Nombre de joueurs">' + counts + '</div>' +
       '<div class="grow"></div><div style="margin-top:22px"><button class="btn" data-act="doCreate">' + (draft.solo ? 'Lancer le test' : 'Générer le code') + '</button></div></main>';
   };
 
   function newGame(role) {
-    const seed = crypto.getRandomValues(new Uint16Array(1))[0] % E.SEED_MAX;
+    const seed = draft.defi ? dailyOf(draft.defi).seed : crypto.getRandomValues(new Uint16Array(1))[0] % E.SEED_MAX;
     const sc = SCN[draft.scenarioId];
-    return hydrate({
+    return hydrate({ defi: draft.defi || null,
       role, scenarioId: sc.id, players: draft.players, seed, code: E.encodeCode(sc.prefix, draft.players, seed),
       stage: 0, started: false, runningSince: 0, elapsedBefore: 0, paused: false, penalty: 0,
       hints: sc.stages.map(() => 0), wrong: 0, lastWord: null, ended: null, soloView: 0
@@ -273,18 +296,29 @@
       '<div class="password" data-word>' + esc(w.word) + '</div><button class="btn" data-o="ok">C\'est noté</button>', () => {});
   }
 
-  function finish(won) {
+  function finish(won, why) {
     if (game.ended) return;
     const rem = Math.max(0, remaining(game));
     game.elapsedBefore = elapsed(game); game.runningSince = 0; game.paused = true;
     const used = E.GAME_SECONDS - rem;
     const nh = game.hints.reduce((a, b) => a + b, 0);
     const stars = won ? E.stars(rem, false) : 0;
-    game.ended = { won, remaining: rem, used, hints: nh, stars, share: E.shareText(game._sc.title, stars, used, nh, !won) };
+    game.ended = { won, remaining: rem, used, hints: nh, stars, share: E.shareText(game._sc.title, stars, used, nh, !won), abandon: why === 'abandon' };
+    if (game.defi && !game.ended.abandon) recordDaily(game, won ? Math.round(rem) : 0);
     saveGame();
     keepAwake(false); A.stopDrone();
     A.play(won ? 'win' : 'lose'); buzz(won ? [60, 60, 60, 60, 200] : [400]);
     go('end');
+  }
+
+  /** Score = secondes restantes (0 hors temps). La série compte pour le jour du lancement (game.defi). */
+  function recordDaily(g, score) {
+    const e = g.ended, avant = J.record(JEU, g.defi, score, '');
+    e.share = J.shareText(E.shareDaily({ n: g.defi.n, title: g._sc.title, stars: e.stars, used: e.used, hints: g.hints,
+      solved: e.won ? g.hints.length : g.stage, wrong: g.wrong, players: g.players, timedOut: !e.won, serie: avant.count }));
+    const s = J.record(JEU, g.defi, score, e.share);
+    e.daily = { serie: s.count, best: s.best,
+      resume: 'Dossier du jour ' + g.defi.n + (e.won ? ' clos, ' + plural(e.stars, 'étoile') : ', hors temps') + ', série de ' + plural(s.count, 'jour') };
   }
 
   SCREENS.end = () => {
@@ -292,13 +326,17 @@
     const st = [0, 1, 2].map((i) => '<span class="' + (i < e.stars ? 'on' : 'off') + '"><svg viewBox="0 0 24 24"><path d="' + IC.star.match(/d="([^"]+)"/)[1] + '"/></svg></span>').join('');
     const finalWord = e.won && g.lastWord ? '<p class="prompt">Mot final pour lire l\'épilogue sur les téléphones des joueurs :</p><div class="password" data-word>' + esc(g.lastWord.word) + '</div>' : '';
     return '<main class="screen end">' +
-      '<div class="verdict">' + (e.won ? 'Dossier clos' : 'Temps écoulé') + '</div>' +
+      (g.defi ? '<div class="label daily-tag">Dossier du jour #' + g.defi.n + '</div>' : '') +
+      '<div class="verdict">' + (e.won ? 'Dossier clos' : e.abandon ? 'Abandon' : 'Temps écoulé') + '</div>' +
       '<p class="prompt">' + esc(sc.title) + '</p>' +
       '<div class="stars" aria-label="' + e.stars + ' étoile' + (e.stars > 1 ? 's' : '') + ' sur 3">' + st + '</div>' +
       '<div class="stats"><div><b>' + E.fmtTime(e.used) + '</b><small>temps</small></div><div><b>' + e.hints + '</b><small>indice' + (e.hints > 1 ? 's' : '') + '</small></div><div><b>' + g.wrong + '</b><small>erreur' + (g.wrong > 1 ? 's' : '') + '</small></div></div>' +
       '<div class="intro" style="text-align:left;margin-bottom:14px">' + (e.won ? sc.ending : sc.failEnding).map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>' +
       (game.role === 'host' ? finalWord : '') +
-      '<div class="share-text" data-share>' + esc(e.share) + '</div>' +
+      (e.daily ? '<div class="streak">' + flame(e.daily.serie) + '<span>Série : ' + plural(e.daily.serie, 'jour') + ' (record ' + e.daily.best + ')</span><small>Prochain dossier dans ' + untilMidnight() + '</small></div><p class="sr">' + esc(e.daily.resume) + '</p>' : '') +
+      (g.defi && e.abandon ? '<p class="prompt">Abandon : ce dossier du jour ne compte pas pour la série.</p>' : '') +
+      '<div class="share-text" data-share' + (e.daily ? ' aria-hidden="true"' : '') + '>' + esc(e.share) + '</div>' +
+      '<div class="sr" role="status" aria-live="polite" data-sharestatus></div><div data-sharebox></div>' +
       '<div class="stack"><button class="btn" data-act="share">' + icon('share') + ' Partager le résultat</button><button class="btn ghost" data-act="newGame">Retour à l\'accueil</button></div></main>';
   };
 
@@ -620,8 +658,9 @@
     home: () => go('home'),
     howto: () => go('howto'),
     settings: () => go('settings'),
-    create: () => { draft.solo = false; go('create'); },
-    solo: () => { draft.solo = true; draft.players = Math.max(draft.players, 3); go('create'); },
+    create: () => { draft.solo = false; draft.defi = null; go('create'); },
+    daily: () => { const t = J.today(); draft.solo = view.name === 'create' && draft.solo; draft.defi = { key: t.key, day: t.day, n: t.n }; draft.scenarioId = dailyOf(t).scenario.id; go('create'); },
+    solo: () => { draft.solo = true; draft.defi = null; draft.players = Math.max(draft.players, 3); go('create'); },
     join: () => go('join'),
     scan: scanQr,
     resume: () => resumeGame(),
@@ -645,15 +684,20 @@
     },
     showWord: () => showWord(false),
     abandon: () => {
-      overlay('<h3>Abandonner ?</h3><p>Le chrono s\'arrête et la partie est perdue.</p><div class="row"><button class="btn ghost" data-o="no">Continuer</button><button class="btn danger" data-o="yes">Abandonner</button></div>', (o) => { if (o === 'yes') finish(false); });
+      overlay('<h3>Abandonner ?</h3><p>Le chrono s\'arrête et la partie est perdue.</p><div class="row"><button class="btn ghost" data-o="no">Continuer</button><button class="btn danger" data-o="yes">Abandonner</button></div>', (o) => { if (o === 'yes') finish(false, 'abandon'); });
     },
     quitGame: () => { game = null; saveGame(); go('home'); },
     share: async () => {
-      const text = game.ended.share;
-      try {
-        if (navigator.share) { await navigator.share({ text }); return; }
-        await navigator.clipboard.writeText(text); toast('Résultat copié');
-      } catch (e) { toast('Copiez le texte ci-dessus'); }
+      const text = game.ended.share, r = await J.share(text); // null : partage annulé
+      if (!r) return;
+      const msg = { partage: 'Résultat partagé', copie: 'Résultat copié', manuel: 'Copiez le texte ci-dessous' }[r];
+      const st = $app.querySelector('[data-sharestatus]'), box = $app.querySelector('[data-sharebox]');
+      if (st) st.textContent = msg;
+      if (r === 'copie') toast(msg);
+      if (r === 'manuel' && box) {
+        box.innerHTML = '<label class="label" for="shareTa">Texte à copier</label><textarea id="shareTa" class="share-ta" readonly rows="6">' + esc(text) + '</textarea>';
+        const ta = box.querySelector('textarea'); ta.focus(); ta.select();
+      }
     },
     newGame: () => { game = null; saveGame(); go('home'); },
     leave: () => {

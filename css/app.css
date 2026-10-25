@@ -125,6 +125,7 @@ input { font: inherit; }
   background: var(--glow); color: #241a08;
   box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .25), 0 0 24px -6px var(--glow);
 }
+.btn svg { width: 22px; height: 22px; flex: none; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .btn:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25); }
 .btn.ghost { background: transparent; color: var(--chalk); box-shadow: inset 0 0 0 1.5px var(--rule); }
 .btn.danger { background: transparent; color: #ff8f84; box-shadow: inset 0 0 0 1.5px #6b2a26; }
@@ -487,3 +488,24 @@ body[data-theme='manoir'] .lock { background: linear-gradient(180deg, #403448, #
 .hold .fill { position: absolute; inset: 0; width: 0; background: var(--glow); }
 .hold.holding .fill { width: 100%; transition: width .9s linear; }
 .hold .lbl { position: relative; mix-blend-mode: difference; color: #fff; }
+
+/* ================= Dossier du jour ================= */
+.folder.daily { background: linear-gradient(180deg, #e2c98f, #cfae6c); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), inset 0 0 0 2px rgba(184, 50, 42, .35), 0 12px 24px -12px rgba(0, 0, 0, .8); overflow: visible; }
+.folder.daily .stamp {
+  position: absolute; right: 58px; top: -6px; transform: rotate(-9deg); padding: 1px 8px; border: 3px double var(--red); color: var(--red);
+  font: normal 900 18px/1.1 var(--f-stencil); letter-spacing: .04em; opacity: .82; mix-blend-mode: multiply; pointer-events: none;
+  animation: stamp-in .5s cubic-bezier(.2, 1.6, .4, 1) .3s backwards;
+}
+@keyframes stamp-in { from { transform: rotate(-30deg) scale(2.2); opacity: 0; } }
+.flame { display: inline-flex; align-items: center; gap: 2px; margin-left: 8px; font-weight: 800; color: #8a2a1f; white-space: nowrap; }
+.flame svg { width: 18px; height: 18px; fill: var(--red); stroke: #6d1d15; stroke-width: 1.2; }
+.folder .flame svg { grid-row: auto; grid-column: auto; width: 18px; height: 18px; fill: var(--red); stroke: #6d1d15; stroke-width: 1.2; }
+.daily-tag { color: var(--glow); margin: 6px 0 0; letter-spacing: .12em; }
+.streak { display: grid; justify-items: center; gap: 2px; margin: 0 0 14px; padding: 10px 12px; border: 1px dashed var(--rule); border-radius: 10px; }
+.streak span { font-weight: 800; font-size: 18px; color: var(--chalk); }
+.streak .flame { margin: 0; font-size: 26px; color: var(--glow); }
+.streak .flame svg { width: 28px; height: 28px; fill: var(--glow); stroke: var(--glow-dim); }
+.streak small { color: var(--chalk-dim); font-size: 15px; }
+.share-ta { width: 100%; margin-bottom: 14px; padding: 10px; border-radius: 8px; border: 1px solid var(--rule); background: rgba(0, 0, 0, .35); color: var(--paper); font: 15px/1.4 var(--f-type); resize: none; }
+.share-ta:focus { outline: 3px solid var(--glow); outline-offset: 2px; }
+.share-text { white-space: pre-line; overflow-wrap: anywhere; }

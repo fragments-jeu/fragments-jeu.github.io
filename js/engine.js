@@ -172,11 +172,37 @@
     return 'FRAGMENTS — ' + title + ' ' + st + ' en ' + fmtTime(elapsedSec) + ', ' + tail;
   }
 
+  // ---- Dossier du jour (PWA seulement : Engine.kt n'a pas de mode du jour) ----
+  const DAILY_URL = 'https://fragments-jeu.github.io/';
+  const DAILY_CELLS = ['🟩', '🟨', '🟧', '🟥'];
+
+  /** Scénario et graine du jour. scenarios : liste de data/index.json ; seed32 : Defi.seed('fragments', key).
+   * Tri par id : réordonner le fichier ne change pas les dossiers (en ajouter un, si). */
+  function dailyPick(scenarios, seed32) {
+    const list = scenarios.slice().sort(function (a, b) { return a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
+    const u = seed32 >>> 0;
+    return { scenario: list[u % list.length], seed: u % SEED_MAX };
+  }
+
+  /** Arguments de Defi.shareText pour une partie du jour terminée ; null si abandon (ne compte pas).
+   * d : { n, title, stars, used, hints: [par énigme], solved, wrong, players, timedOut, serie, abandon } */
+  function shareDaily(d) {
+    if (d.abandon) return null;
+    const cells = d.hints.map(function (h, i) { return i < d.solved ? DAILY_CELLS[Math.min(h, 3)] : '⬛'; }).join('');
+    const nh = d.hints.reduce(function (a, b) { return a + b; }, 0);
+    const detail = (d.timedOut ? 'hors temps' : fmtTime(d.used)) + ' · ' +
+      (nh === 0 ? 'sans indice' : nh === 1 ? '1 indice' : nh + ' indices') + ' · ' +
+      (d.wrong === 0 ? 'sans erreur' : d.wrong === 1 ? '1 erreur' : d.wrong + ' erreurs') + ' · ' + d.players + ' joueurs';
+    return { nom: 'FRAGMENTS', n: d.n, emoji: '🗂️', score: d.title + ' ' + (d.stars > 0 ? new Array(d.stars + 1).join('⭐') : '☆'),
+      lignes: [cells], detail: detail, serie: d.serie, url: DAILY_URL };
+  }
+
   return {
     ALPH: ALPH, SEED_MAX: SEED_MAX, GAME_SECONDS: GAME_SECONDS, HINT_COST: HINT_COST, WRONG_COST: WRONG_COST,
     fnv1a: fnv1a, Rng: Rng, shuffle: shuffle,
     encodeCode: encodeCode, decodeCode: decodeCode,
     assignItems: assignItems, zonesFor: zonesFor, searchLayout: searchLayout, variantIndex: variantIndex, unlockWordIndices: unlockWordIndices,
-    normalize: normalize, stars: stars, fmtTime: fmtTime, setupGame: setupGame, shareText: shareText
+    normalize: normalize, stars: stars, fmtTime: fmtTime, setupGame: setupGame, shareText: shareText,
+    DAILY_URL: DAILY_URL, dailyPick: dailyPick, shareDaily: shareDaily
   };
 });
