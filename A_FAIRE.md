@@ -6,6 +6,7 @@
 - 24/10 : création de README, ARCHITECTURE, PIEGES, A_FAIRE.
 
 - 25/10 : checklist « avant lancement » : `privacy.html` créée (confidentialité exacte : stockage local, caméra du scan QR, partage, cookies ; conditions d'utilisation ; mentions légales), lien dans les Réglages, titre + description + Open Graph + `og-image.png` 1200×630, `404.html`, `robots.txt` + `sitemap.xml`, contraste AA (sous-titres des dossiers, tampon des documents, exemple du champ code), cache `fragments-v2.4` (+ `privacy.html` hors ligne).
+- 25/10 : passe SEO éditoriale (requête « party game entre amis sur téléphone ») : `<title>`, description, Open Graph alignés ; `<h1>` masqué de l'accueil (`js/app.js`) et paragraphe `<noscript>` reprenant la requête ; données structurées `VideoGame` (3 à 6 joueurs, coop) en fin de `<body>` ; cache `fragments-v2.5`.
 
 ## En cours
 

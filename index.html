@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fragments — jeu d'évasion entre amis, chacun sur son téléphone</title>
-<meta name="description" content="Jeu d'évasion coopératif hors ligne, de 3 à 6 joueurs, chacun sur son téléphone. Chacun tient une pièce du dossier : gratuit, sans compte.">
+<title>Party game entre amis sur téléphone | Fragments</title>
+<meta name="description" content="Party game entre amis sur téléphone : un jeu d'évasion coopératif de 3 à 6 joueurs où chacun tient une pièce du dossier. Gratuit, hors ligne et sans compte.">
 <meta name="theme-color" content="#1b211a">
 <meta name="color-scheme" content="dark">
 <link rel="manifest" href="manifest.webmanifest">
@@ -14,8 +14,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Fragments">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:title" content="Fragments — jeu d'évasion entre amis">
-<meta property="og:description" content="Jeu d'évasion coopératif hors ligne, de 3 à 6 joueurs, chacun sur son téléphone. Chacun tient une pièce du dossier : gratuit, sans compte.">
+<meta property="og:title" content="Party game entre amis sur téléphone | Fragments">
+<meta property="og:description" content="Party game entre amis sur téléphone : un jeu d'évasion coopératif de 3 à 6 joueurs où chacun tient une pièce du dossier. Gratuit, hors ligne et sans compte.">
 <meta property="og:url" content="https://fragments-jeu.github.io/">
 <meta property="og:image" content="https://fragments-jeu.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -27,12 +27,51 @@
 </head>
 <body>
 <div id="app" aria-live="polite"></div>
-<noscript>Fragments a besoin de JavaScript.</noscript>
+<noscript><p>Fragments est un party game entre amis sur téléphone : un jeu d'évasion coopératif de 3 à 6 joueurs, chacun tient une pièce du dossier. Gratuit, hors ligne, sans compte. Fragments a besoin de JavaScript.</p></noscript>
 <script src="js/defi.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/qr.js"></script>
 <script src="js/docs.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/app.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Fragments",
+  "url": "https://fragments-jeu.github.io/",
+  "description": "Party game entre amis sur téléphone : un jeu d'évasion coopératif de 3 à 6 joueurs où chacun tient une pièce du dossier. Gratuit, hors ligne et sans compte.",
+  "image": "https://fragments-jeu.github.io/og-image.png",
+  "inLanguage": "fr",
+  "genre": [
+    "Party game",
+    "Jeu d'évasion",
+    "Coopération"
+  ],
+  "gamePlatform": [
+    "Android",
+    "Navigateur web"
+  ],
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Android, Web",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Aulit42369",
+    "url": "https://aulit42369.github.io/Site/"
+  },
+  "playMode": "CoOp",
+  "numberOfPlayers": {
+    "@type": "QuantitativeValue",
+    "minValue": 3,
+    "maxValue": 6
+  }
+}
+</script>
 </body>
 </html>

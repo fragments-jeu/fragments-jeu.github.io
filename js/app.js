@@ -123,7 +123,7 @@
       ? '<button class="folder alt" data-act="resume"><b>Reprendre</b><span>' + esc(SCN[game.scenarioId] ? SCN[game.scenarioId].title : '') + ' — ' + (game.role === 'player' ? 'joueur ' + game.playerNo : game.role === 'solo' ? 'mode test' : 'maître du jeu') + '</span>' + icon('resume') + '</button>'
       : '';
     return '<div class="lamp" aria-hidden="true"></div><main class="screen home">' +
-      '<div class="title-wrap"><h1 class="sr">Fragments</h1><div class="scraps" aria-hidden="true">' + title + '</div>' +
+      '<div class="title-wrap"><h1 class="sr">Fragments, party game entre amis sur téléphone</h1><div class="scraps" aria-hidden="true">' + title + '</div>' +
       '<p class="subtitle">Chacun tient une pièce du dossier. Personne ne s\'en sortira seul.</p></div>' +
       '<nav class="folders">' + resume +
       '<button class="folder" data-act="create"><b>Créer une partie</b><span>Ce téléphone devient le maître du jeu</span>' + icon('lock') + '</button>' +
