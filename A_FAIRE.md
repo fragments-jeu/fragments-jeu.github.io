@@ -14,6 +14,8 @@
 
 - 25/10 : lot 18, refactorisation pure : `js/app.js` (783) découpé en 5 modules (`app-etat`, `app-joueur`, `app-mj`, `app-accueil`, `app`, 120 à 251 lignes), `css/app.css` (512) en 4 feuilles (`app`, `ecrans`, `documents`, `fouille`, 103 à 149 lignes). Rendu, FR/EN, clés de sauvegarde, manifest, parité Android inchangés (parcours jsdom FR/EN identique à l'octet). Nouveau test `tests/structure.test.js`. Cache `fragments-v2.8`. Tests : 35 verts. Android : aucun fichier Kotlin > 400 lignes, rien à faire.
 
+- 25/10 : contact **aulit42369@gmail.com** dans `privacy.html` (FR et EN, lien `mailto:`, tickets GitHub en second), cache `fragments-v2.9`. Fiches `JEUXragmentsstore*ull-description.txt` : ligne « Contact ». Appli Android : son lien ouvre la page en ligne, rien à reconstruire.
+
 ## En cours
 
 ## À faire
@@ -22,14 +24,13 @@
 - Android 2.0 : tester l'APK sur téléphone puis envoyer `Fragments-2.0.aab` sur la Play Console (voir `JEUX\fragments\android\A_FAIRE.md`).
 - Les tests de `JEUX\fragments\tests` pointent vers l'ancienne copie `pwa\` (12/10) : les rebrancher sur ce dépôt.
 
-- Ajouter une adresse e-mail de contact publique dans `privacy.html` si souhaité (aujourd'hui : tickets GitHub). URL pour le Play Store : `https://fragments-jeu.github.io/privacy.html`.
 - Mesure d'audience : rien d'installé (à décider ; option sans cookie si oui).
 
 ## Décisions prises
 - 25/10 (lot 7) : en anglais, **réponses et mots de passage restent en français** (FILTRE, OMBRE, FOURGON, BOUSSOLE…) : ils sont tapés sur la serrure commune et doivent être identiques pour un groupe mixte FR/EN. Les indices anglais les glosent (« FOURGON (French for the luggage van) »). Les titres des livres du manoir gardent leur initiale (réponse = initiales). Le voyant vert du pupitre est noté G en anglais (V en français), heures « 23h40 » écrites « 23:40 » (mêmes chiffres).
 - 25/10 (lot 6) : carte des autres jeux dans les Réglages (pas sur l'accueil, déjà chargé de 3 dossiers).
 - 25/10 (lot 4) : image seulement pour le Dossier du jour (pas pour les parties normales), le texte partagé reste celui de `defi.js`.
-- 25/10 : contact = page « Issues » du dépôt GitHub ; CGU et mentions légales dans `privacy.html`.
+- 25/10 (décision d'Olivier) : contact public = **aulit42369@gmail.com** (lien `mailto:` dans `privacy.html`, toutes les langues), les tickets GitHub restent proposés en second. CGU et mentions légales dans `privacy.html` (URL Play Store : `https://fragments-jeu.github.io/privacy.html`).
 - 25/10 : accueil avec deux entrées principales (Créer / Rejoindre) gardé tel quel : le jeu a deux rôles (MJ, joueur), un bouton « Jouer » unique n'aurait pas de sens.
 - 24/10 : le jour change à minuit heure de Paris pour tout le monde (Q1 de la spec, option appliquée par défaut).
 - 24/10 : série quotidienne gardée pour Fragments malgré les parties de 45 min (Q3, par cohérence entre les 4 jeux, en attente de confirmation).
