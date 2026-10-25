@@ -5,11 +5,12 @@
 |---|---|
 | `index.html` | coquille, ordre des scripts (`defi.js` en premier) |
 | `js/defi.js` | **commun aux 4 jeux** : date de Paris, graine, série, texte partagé. Copie identique dans ÉCHO, LUMEN, Résonance |
-| `js/engine.js` | moteur pur (codes, répartition, graines, étoiles, textes de partage, `dailyPick`, `shareDaily`). Parité avec `Engine.kt` sauf le dossier du jour |
+| `js/engine.js` | moteur pur (codes, répartition, graines, étoiles, textes de partage, `dailyPick`, `shareDaily`). Parité exacte avec l'appli Android 2.0 (`Engine.kt` + `Daily.kt`, dossier du jour compris), vérifiée par ses tests à partir de vecteurs tirés de ce fichier |
 | `js/app.js` | écrans et actions (vanilla JS) — **783 lignes, au-delà du seuil de 400 : écart préexistant** |
 | `js/docs.js` | rendu SVG des documents |
 | `js/audio.js` | sons WebAudio générés |
 | `js/qr.js` | encodeur QR (parité `Qr.kt`) |
+| (Android) | `F:\Stream\files\JEUX\fragments\android` : copie exacte de `data/*.json` dans `assets/scenarios/`, `defi.js` porté dans `Defi.kt` (copie de LUMEN), vecteurs `node tools/make-parity.js` (lit ce dépôt sans y écrire) |
 | `css/app.css` | thème « dossier sous la lampe » (510 lignes, écart préexistant) |
 | `data/*.json` | scénarios (**ne jamais modifier**) |
 | `sw.js` | cache d'abord, hors ligne complet |
