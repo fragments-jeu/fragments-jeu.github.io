@@ -1,0 +1,123 @@
+/* FRAGMENTS — documents (papier, note, téléscripteur, polaroid, plan, calque, billet, tarot) + comment jouer. */
+/* ================= DOCUMENTS ================= */
+.doc { position: relative; color: var(--ink); font-family: var(--f-type); font-size: 16.5px; line-height: 1.5; padding: 20px 18px 18px; }
+.doc .dref { font-family: var(--f-type); font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
+.doc .dtitle { font-family: var(--f-type); font-weight: 700; font-size: 18px; margin: 0 0 12px; line-height: 1.25; }
+.doc p { margin: 0 0 10px; }
+.doc b, .doc strong { font-weight: 700; background: linear-gradient(transparent 60%, rgba(184, 50, 42, .22) 60%); }
+.redact { background: #111; color: #111; padding: 0 2px; border-radius: 1px; letter-spacing: -.02em; user-select: none; }
+.doc ul { margin: 0 0 10px; padding-left: 18px; }
+.doc li { margin-bottom: 6px; }
+.doc table { width: 100%; border-collapse: collapse; margin: 4px 0 10px; font-size: 15px; }
+.doc th { text-align: left; font-weight: 700; border-bottom: 1.5px solid currentColor; padding: 4px 4px; }
+.doc td { border-bottom: 1px dotted rgba(0, 0, 0, .35); padding: 5px 4px; vertical-align: top; }
+.doc .sign { font-family: var(--f-hand); font-size: 26px; text-align: right; margin-top: 6px; color: #23396e; }
+.doc .stamp {
+  position: absolute; right: 14px; bottom: 16px; transform: rotate(-12deg); padding: 3px 10px; border: 3px double var(--red); color: var(--red);
+  font-family: var(--f-stencil); font-weight: 900; font-size: 22px; opacity: .9; mix-blend-mode: multiply; pointer-events: none;
+}
+.doc svg.fig { display: block; width: 100%; height: auto; margin: 4px 0 10px; }
+
+/* papier dactylographié */
+.doc.paper, .doc.file, .doc.diary {
+  background: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .2 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E"),
+    radial-gradient(130% 90% at 50% 40%, transparent 55%, rgba(120, 80, 30, .25));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .4) inset, 0 18px 30px -18px #000;
+  border-radius: 2px;
+}
+.doc.file { padding-top: 34px; }
+.doc.file::before { content: ''; position: absolute; left: 18px; top: 12px; width: 46px; height: 10px; border-radius: 5px; background: #8b8b85; box-shadow: 70px 0 0 #8b8b85; opacity: .55; }
+.doc.file .dref { position: absolute; right: 14px; top: 10px; }
+.doc.diary { background-color: #efe4cf; font-family: var(--f-hand); font-size: 25px; line-height: 1.25; color: #2d2a52; padding-left: 38px; background-image: repeating-linear-gradient(transparent 0 30px, rgba(70, 90, 160, .22) 30px 31px), linear-gradient(90deg, transparent 26px, rgba(184, 50, 42, .4) 26px 27.5px, transparent 27.5px); }
+.doc.diary .dtitle { font-family: var(--f-hand); font-size: 28px; font-weight: 700; color: #2d2a52; }
+.doc.diary .dref { font-family: var(--f-type); }
+
+/* note manuscrite */
+.doc.note {
+  background: #f1e9a8; font-family: var(--f-hand); font-size: 26px; line-height: 1.2; color: #23285a; transform: rotate(-.8deg);
+  box-shadow: 0 22px 26px -20px #000; clip-path: polygon(0 2%, 7% 0, 18% 1.5%, 33% 0, 51% 1%, 68% 0, 84% 1.6%, 100% 0, 99% 100%, 0 99%);
+}
+.doc.note .dtitle { font-family: var(--f-hand); font-size: 22px; font-weight: 500; color: #6d6435; margin-bottom: 6px; }
+.doc.note .dref { display: none; }
+.doc.note b { background: linear-gradient(transparent 70%, rgba(220, 60, 40, .45) 70%); }
+
+/* téléscripteur */
+.doc.telex {
+  background: #ece9df; font-family: var(--f-type); text-transform: none; letter-spacing: .01em;
+  border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+  background-image: radial-gradient(circle at 8px 50%, var(--desk) 3.2px, transparent 3.6px), radial-gradient(circle at calc(100% - 8px) 50%, var(--desk) 3.2px, transparent 3.6px);
+  background-size: 16px 18px; background-repeat: repeat-y; background-position: 0 0, 100% 0;
+  padding-left: 26px; padding-right: 26px; box-shadow: 0 18px 30px -18px #000;
+}
+.doc.telex::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; height: 10px; background: linear-gradient(-45deg, #ece9df 5px, transparent 0), linear-gradient(45deg, #ece9df 5px, transparent 0); background-size: 10px 10px; }
+.doc.telex::after { content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px; background: linear-gradient(-135deg, #ece9df 5px, transparent 0), linear-gradient(135deg, #ece9df 5px, transparent 0); background-size: 10px 10px; }
+.doc.telex .dtitle { font-weight: 700; letter-spacing: .06em; border-bottom: 1px dashed #777; padding-bottom: 8px; }
+
+/* polaroid */
+.doc.polaroid { background: #f6f4ee; padding: 14px 14px 18px; transform: rotate(.9deg); box-shadow: 0 22px 30px -18px #000; }
+.doc.polaroid .photo { color: #e9e3d0; background: #1c1d1a; padding: 12px; border-radius: 1px; box-shadow: inset 0 0 40px rgba(0, 0, 0, .9); filter: sepia(.25) contrast(1.05); }
+.doc.polaroid .photo svg.fig { margin: 0; }
+.doc.polaroid .dtitle { font-family: var(--f-hand); font-size: 26px; font-weight: 700; margin: 10px 0 2px; text-align: center; }
+.doc.polaroid .dref { position: absolute; top: 18px; right: 20px; color: #ddd; font-size: 12px; z-index: 1; }
+.doc.polaroid p { font-family: var(--f-hand); font-size: 21px; text-align: center; color: #3b3a35; margin: 0; }
+
+/* plan bleu */
+.doc.blueprint {
+  background-color: var(--blue); color: var(--blue-line); border-radius: 3px;
+  background-image: linear-gradient(rgba(207, 227, 242, .09) 1px, transparent 1px), linear-gradient(90deg, rgba(207, 227, 242, .09) 1px, transparent 1px);
+  background-size: 18px 18px; box-shadow: 0 18px 30px -18px #000, inset 0 0 0 6px rgba(207, 227, 242, .12);
+}
+.doc.blueprint .dref, .doc.blueprint .dtitle { color: var(--blue-line); }
+.doc.blueprint .dtitle { letter-spacing: .05em; }
+.doc.blueprint b { background: none; text-decoration: underline; }
+
+/* calque */
+.doc.calque {
+  color: #3a3d3a; border-radius: 3px;
+  background: linear-gradient(135deg, rgba(240, 244, 236, .82), rgba(222, 230, 220, .72));
+  box-shadow: 0 18px 30px -18px #000, inset 0 0 0 1px rgba(255, 255, 255, .5);
+}
+
+/* billet */
+.doc.ticket {
+  background: #e7d6a8; color: #3a2a12; border-radius: 6px;
+  -webkit-mask: radial-gradient(circle 12px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 12px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 12px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 12px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+  box-shadow: inset 0 0 0 6px #e7d6a8, inset 0 0 0 7.5px #a2874d;
+}
+.doc.ticket .dtitle { font-family: var(--f-stencil); font-weight: 900; font-size: 24px; letter-spacing: .03em; }
+
+/* tarot */
+.doc.tarot {
+  background: #1d1626; color: #ecd9a4; border-radius: 14px; padding: 16px; text-align: center;
+  box-shadow: 0 0 0 2px #ecd9a4 inset, 0 0 0 7px #1d1626 inset, 0 0 0 8px rgba(236, 217, 164, .5) inset, 0 20px 30px -18px #000;
+}
+.doc.tarot .dref { color: rgba(236, 217, 164, .6); }
+.doc.tarot .dtitle { display: none; }
+.doc.tarot p { font-family: var(--f-hand); font-size: 22px; color: #ecd9a4; }
+.tarot-card .num { font-family: var(--f-stencil); font-weight: 900; font-size: 44px; line-height: 1; }
+.tarot-card .name { font-family: var(--f-stencil); font-weight: 700; font-size: 26px; letter-spacing: .08em; margin-top: 6px; }
+.tarot-card svg { width: 44%; margin: 10px auto; display: block; }
+
+.bigtext { font-family: var(--f-stencil); font-weight: 900; font-size: 40px; letter-spacing: .14em; text-align: center; margin: 8px 0 12px; word-break: break-all; }
+.strip { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; font-family: var(--f-stencil); font-weight: 900; font-size: 22px; text-align: center; }
+.strip span { border-bottom: 1px solid currentColor; padding: 2px 0; }
+.inkletter { display: flex; justify-content: flex-end; margin-top: 6px; }
+.inkletter span { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; border: 2.5px solid #a3241c; color: #a3241c; font-family: var(--f-hand); font-weight: 700; font-size: 40px; transform: rotate(-8deg); }
+
+/* ---------- comment jouer ---------- */
+.howto { counter-reset: s; display: grid; gap: 16px; }
+.step { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: center; }
+.step svg { width: 112px; height: 112px; }
+.step h4 { margin: 0 0 4px; font-family: var(--f-stencil); font-weight: 900; font-size: 24px; }
+.step h4::before { counter-increment: s; content: counter(s) '. '; color: var(--glow); }
+.step p { margin: 0; color: var(--chalk-dim); font-size: 17px; }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + var(--safe-b)); transform: translateX(-50%); z-index: 60; background: var(--chalk); color: var(--desk); padding: 12px 18px; border-radius: 10px; font-weight: 800; box-shadow: 0 10px 30px #000; animation: fade .2s; }
+.flash-ok { animation: flashok .9s; }
+@keyframes flashok { 0% { box-shadow: inset 0 0 0 100vmax rgba(143, 209, 138, .25); } 100% { box-shadow: inset 0 0 0 100vmax transparent; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

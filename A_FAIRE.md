@@ -12,13 +12,14 @@
 
 - 25/10 : lots 4 à 7. (4) « Partager l'image » sur la fin du Dossier du jour : carte 1080×1920 dessinée (FRAGMENTS en papiers découpés, chemise, n°, scénario, étoiles, cases dessinées, série, tampon, lien), `navigator.share({files, text})`, repli téléchargement. (6) Carte « Les autres jeux d'Aulit » dans les Réglages (ÉCHO, LUMEN, Résonance). (7) Anglais : langue du navigateur + sélecteur FR/EN mémorisé dans les Réglages, interface (`i18n/strings.json`) et 3 scénarios (`i18n/scenarios/en/`), clavier QWERTY en anglais, `privacy.html` bilingue (#en). `data/` inchangé, `defi.js` inchangé. Cache `fragments-v2.7`. Tests : 32 verts.
 
+- 25/10 : lot 18, refactorisation pure : `js/app.js` (783) découpé en 5 modules (`app-etat`, `app-joueur`, `app-mj`, `app-accueil`, `app`, 120 à 251 lignes), `css/app.css` (512) en 4 feuilles (`app`, `ecrans`, `documents`, `fouille`, 103 à 149 lignes). Rendu, FR/EN, clés de sauvegarde, manifest, parité Android inchangés (parcours jsdom FR/EN identique à l'octet). Nouveau test `tests/structure.test.js`. Cache `fragments-v2.8`. Tests : 35 verts. Android : aucun fichier Kotlin > 400 lignes, rien à faire.
+
 ## En cours
 
 ## À faire
 - Lots 4-7 : vérifier sur téléphone (Chrome Android) le partage de l'image (WhatsApp, Instagram story) et le passage FR ⇄ EN dans les Réglages ; relire l'anglais des scénarios en jouant (traduction faite d'un bloc, non relue en partie réelle).
 - Liens des autres jeux : remplacer par les liens Play Store quand les applis seront publiées (`js/autres-jeux.js`).
 - Android 2.0 : tester l'APK sur téléphone puis envoyer `Fragments-2.0.aab` sur la Play Console (voir `JEUX\fragments\android\A_FAIRE.md`).
-- Découper `js/app.js` (783 lignes) et `css/app.css` (510 lignes) sous le seuil de 400 lignes.
 - Les tests de `JEUX\fragments\tests` pointent vers l'ancienne copie `pwa\` (12/10) : les rebrancher sur ce dépôt.
 
 - Ajouter une adresse e-mail de contact publique dans `privacy.html` si souhaité (aujourd'hui : tickets GitHub). URL pour le Play Store : `https://fragments-jeu.github.io/privacy.html`.

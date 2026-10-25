@@ -106,7 +106,7 @@ function clesDuCode(src) {
   }
   return out;
 }
-const SOURCES = ['app.js', 'docs.js', 'engine.js', 'autres-jeux.js', 'howto.js', 'share-image.js'];
+const SOURCES = ['app-etat.js', 'app-joueur.js', 'app-mj.js', 'app-accueil.js', 'app.js', 'docs.js', 'engine.js', 'autres-jeux.js', 'howto.js', 'share-image.js'];
 function manquantes() {
   const cles = new Set();
   for (const f of SOURCES) clesDuCode(fs.readFileSync(path.join(racine, 'js', f), 'utf8')).forEach((k) => cles.add(k));
