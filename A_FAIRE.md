@@ -16,10 +16,12 @@
 
 - 25/10 : contact **aulit42369@gmail.com** dans `privacy.html` (FR et EN, lien `mailto:`, tickets GitHub en second), cache `fragments-v2.9`. Fiches `JEUXragmentsstore*ull-description.txt` : ligne « Contact ». Appli Android : son lien ouvre la page en ligne, rien à reconstruire.
 
+- 25/10 : relecture de l'anglais avec DeepL : 1 207 textes comparés (3 scénarios + interface), 23 corrigés dans les dictionnaires `JEUX\fragments\tools\i18n\en-*.json` (1 grave : deux textes du manoir inversés, plan de la table / journal de la médium ; 2 moyennes : « Read forwards » trompeur dans les indices RUBIS, faux-ami « slide rule » ; 15 mineures). Journal détaillé : `JEUX\fragments\tools\i18n\RELECTURE-DEEPL.md`. Interface : rien à corriger. `i18n/scenarios/en/` régénéré, cache `fragments-v2.10`, tests 35 verts. Appli 2.1 refaite avec les mêmes textes.
+
 ## En cours
 
 ## À faire
-- Lots 4-7 : vérifier sur téléphone (Chrome Android) le partage de l'image (WhatsApp, Instagram story) et le passage FR ⇄ EN dans les Réglages ; relire l'anglais des scénarios en jouant (traduction faite d'un bloc, non relue en partie réelle).
+- Lots 4-7 : vérifier sur téléphone (Chrome Android) le partage de l'image (WhatsApp, Instagram story) et le passage FR ⇄ EN dans les Réglages ; jouer une partie en anglais (textes relus avec DeepL le 25/10, mais pas encore en partie réelle avec les figures).
 - Liens des autres jeux : remplacer par les liens Play Store quand les applis seront publiées (`js/autres-jeux.js`).
 - Android 2.0 : tester l'APK sur téléphone puis envoyer `Fragments-2.0.aab` sur la Play Console (voir `JEUX\fragments\android\A_FAIRE.md`).
 - Les tests de `JEUX\fragments\tests` pointent vers l'ancienne copie `pwa\` (12/10) : les rebrancher sur ce dépôt.
