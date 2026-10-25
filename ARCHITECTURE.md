@@ -1,5 +1,19 @@
 # Fragments — architecture (PWA)
 
+## 0. Lot 18 (25/10/2026) — plan de découpage (refactorisation pure, aucun changement de comportement)
+Objectif : plus aucun fichier au-delà de ~400 lignes, une responsabilité par fichier, rendu / FR-EN / clés de sauvegarde / id du manifest / parité Android inchangés.
+1. **Filet d'abord** : parcours jsdom FR + EN (solo du jour complet avec indice, erreur, fouille, « forcer », trouvailles, pause, fin, partage manuel ; MJ lobby → abandon ; joueur code → siège → fouille → mot faux/juste → quitter → reprendre) qui enregistre le DOM complet + `localStorage` à 44 étapes par langue. Instantané « avant » pris sur le code d'origine ; « après » doit être identique à l'octet. Ajout d'un test `node --test` sans dépendance : chaque script/feuille de `index.html` existe et est dans le cache de `sw.js`, `defi.js` reste premier, le CSS découpé recolle à l'identique.
+2. **`js/app.js` (783) → 5 fichiers chargés dans cet ordre, après `share-image.js`** (aucune dépendance vers l'avant, donc les fonctions sont prises dans `window.FragApp` au chargement) :
+   `app-etat.js` (état partagé `S.game`/`S.view`/`S.INDEX`, stockage, icônes, données, chrono, verrouillage d'écran, navigation `go`/`toast`/`overlay`/`topbar`) →
+   `app-joueur.js` (vue joueur : fouille, trouvailles, feuilles, mot de passage) →
+   `app-mj.js` (lobby, console, serrure, solo, fin de partie, dossier du jour enregistré, écran de fin) →
+   `app-accueil.js` (accueil, création, rejoindre + scan QR, comment jouer, réglages) →
+   `app.js` (actions des boutons, clavier, toucher direct, démarrage).
+   Seul changement de code : les variables réassignées (`game`, `view`, `INDEX`, `tickTimer`) deviennent `S.game`… ; le reste est déplacé tel quel.
+3. **`css/app.css` (512) → 4 feuilles contiguës** sans toucher une règle : `app.css` (base, barre du haut, accueil, boutons), `ecrans.css` (création, lobby, console, serrure, surcouches, fin, vue joueur), `documents.css` (documents + comment jouer), `fouille.css` (fouille, trouvailles, feuille, dossier du jour) ; `extras.css` reste en dernier.
+4. `sw.js` : nouvelle liste + `fragments-v2.8`. `tests/i18n.test.js` : la liste des fichiers scannés pour `T(…)` suit les nouveaux modules.
+5. Android : mesuré, aucun fichier Kotlin > 400 lignes (max `ui/Figures.kt` 371) → rien à découper, AAB/APK non refaits.
+
 ## 1. Modules
 | Fichier | Rôle |
 |---|---|
