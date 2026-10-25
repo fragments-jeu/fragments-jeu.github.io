@@ -1,7 +1,7 @@
 /* FRAGMENTS — application (vanilla JS, hors ligne, sans serveur). */
 (function () {
   'use strict';
-  const E = window.FragEngine, D = window.FragDocs, A = window.FragAudio, Q = window.FragQR, J = window.Defi;
+  const E = window.FragEngine, D = window.FragDocs, A = window.FragAudio, Q = window.FragQR, J = window.Defi, I = window.FragI18n, T = I.t, TN = I.tn;
   const $app = document.getElementById('app');
   const esc = D.esc;
   const cap = (t) => (t ? t.charAt(0).toUpperCase() + t.slice(1) : t);
@@ -46,9 +46,12 @@
 
   // ---------- données ----------
   async function loadData() {
-    INDEX = await (await fetch('data/index.json')).json();
+    try { I.init(await (await fetch('i18n/strings.json')).json(), navigator); } catch (e) { I.init(null, navigator); }
+    document.documentElement.lang = I.lang;
+    const dir = I.scenarioDir();
+    INDEX = await (await fetch(dir + 'index.json')).json();
     D.setGlyphs(INDEX.glyphs);
-    await Promise.all(INDEX.scenarios.map(async (s) => { SCN[s.id] = await (await fetch('data/' + s.file)).json(); }));
+    await Promise.all(INDEX.scenarios.map(async (s) => { SCN[s.id] = await (await fetch(dir + s.file)).json(); }));
   }
   const byPrefix = (p) => Object.values(SCN).find((s) => s.prefix === p);
 
@@ -64,11 +67,11 @@
   const JEU = 'fragments';
   const dailyOf = (t) => E.dailyPick(INDEX.scenarios, J.seed(JEU, t.key));
   const flame = (n) => (n > 0 ? '<span class="flame">' + icon('flame') + n + '</span>' : '');
-  const plural = (n, w) => n + ' ' + w + (n > 1 ? 's' : '');
+  const days = (n) => TN(n, '{0} jour', '{0} jours');
   function untilMidnight() { // minuit de Paris = 22 h UTC l'été, 23 h l'hiver
     const p = J.parisDate(), a = Date.UTC(p.y, p.m - 1, p.d + 1) - 7200000;
     const m = Math.max(1, Math.ceil(((J.parisDate(a).key !== p.key ? a : a + 3600000) - Date.now()) / 60000));
-    return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
+    return T('{0} h {1}', Math.floor(m / 60), String(m % 60).padStart(2, '0'));
   }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && view.name === 'home' && INDEX) go('home'); });
 
@@ -109,7 +112,7 @@
     const f = o.querySelector('button'); if (f) f.focus();
     return o;
   }
-  const topbar = (title, back, right) => '<header class="topbar">' + (back ? '<button class="iconbtn" data-act="' + back + '" aria-label="Retour">' + icon('back') + '</button>' : '') + '<h2>' + esc(title) + '</h2>' + (right || '') + '</header>';
+  const topbar = (title, back, right) => '<header class="topbar">' + (back ? '<button class="iconbtn" data-act="' + back + '" aria-label="' + T('Retour') + '">' + icon('back') + '</button>' : '') + '<h2>' + esc(title) + '</h2>' + (right || '') + '</header>';
 
   // =============== ÉCRANS ===============
   const SCREENS = {};
@@ -120,24 +123,24 @@
     const rot = [-4, 3, -2, 5, -3, 2, -5, 3, -2], dy = [2, -3, 4, -1, 3, -4, 1, -2, 3];
     const title = letters.map((l, i) => '<span class="scrap' + (i === 4 ? ' red' : '') + '" style="--r:' + rot[i] + 'deg;--dx:0px;--dy:' + dy[i] + 'px;--d:' + (i * 60) + 'ms">' + l + '</span>').join('');
     const resume = game && !game.ended && game.role
-      ? '<button class="folder alt" data-act="resume"><b>Reprendre</b><span>' + esc(SCN[game.scenarioId] ? SCN[game.scenarioId].title : '') + ' — ' + (game.role === 'player' ? 'joueur ' + game.playerNo : game.role === 'solo' ? 'mode test' : 'maître du jeu') + '</span>' + icon('resume') + '</button>'
+      ? '<button class="folder alt" data-act="resume"><b>' + T('Reprendre') + '</b><span>' + esc(SCN[game.scenarioId] ? SCN[game.scenarioId].title : '') + ' — ' + (game.role === 'player' ? T('joueur {0}', game.playerNo) : game.role === 'solo' ? T('mode test') : T('maître du jeu')) + '</span>' + icon('resume') + '</button>'
       : '';
     return '<div class="lamp" aria-hidden="true"></div><main class="screen home">' +
-      '<div class="title-wrap"><h1 class="sr">Fragments, party game entre amis sur téléphone</h1><div class="scraps" aria-hidden="true">' + title + '</div>' +
-      '<p class="subtitle">Chacun tient une pièce du dossier. Personne ne s\'en sortira seul.</p></div>' +
+      '<div class="title-wrap"><h1 class="sr">' + T('Fragments, party game entre amis sur téléphone') + '</h1><div class="scraps" aria-hidden="true">' + title + '</div>' +
+      '<p class="subtitle">' + T('Chacun tient une pièce du dossier. Personne ne s\'en sortira seul.') + '</p></div>' +
       '<nav class="folders">' + resume +
-      '<button class="folder" data-act="create"><b>Créer une partie</b><span>Ce téléphone devient le maître du jeu</span>' + icon('lock') + '</button>' +
+      '<button class="folder" data-act="create"><b>' + T('Créer une partie') + '</b><span>' + T('Ce téléphone devient le maître du jeu') + '</span>' + icon('lock') + '</button>' +
       dailyFolder() +
-      '<button class="folder" data-act="join"><b>Rejoindre</b><span>Avec le code ou le QR du maître du jeu</span>' + icon('join') + '</button>' +
+      '<button class="folder" data-act="join"><b>' + T('Rejoindre') + '</b><span>' + T('Avec le code ou le QR du maître du jeu') + '</span>' + icon('join') + '</button>' +
       '</nav>' +
-      '<div class="minor"><button data-act="solo">' + icon('solo') + 'Mode test solo</button><button data-act="howto">' + icon('help') + 'Comment jouer</button><button data-act="settings">' + icon('gear') + 'Réglages</button></div>' +
+      '<div class="minor"><button data-act="solo">' + icon('solo') + T('Mode test solo') + '</button><button data-act="howto">' + icon('help') + T('Comment jouer') + '</button><button data-act="settings">' + icon('gear') + T('Réglages') + '</button></div>' +
       '</main>';
   };
 
   function dailyFolder() {
     const t = J.today(), sc = dailyOf(t).scenario, done = J.load(JEU).jours[t.key];
-    const etat = done ? 'fait ✓' + (done.score ? ' ' + '★'.repeat(E.stars(done.score, false)) : '') : 'à faire';
-    return '<button class="folder daily" data-act="daily"><b>Dossier du jour</b><span>#' + t.n + ' · ' + esc(sc.title) + ' · ' + etat + flame(J.serie(JEU, t)) + '</span>' +
+    const etat = done ? T('fait ✓') + (done.score ? ' ' + '★'.repeat(E.stars(done.score, false)) : '') : T('à faire');
+    return '<button class="folder daily" data-act="daily"><b>' + T('Dossier du jour') + '</b><span>#' + t.n + ' · ' + esc(sc.title) + ' · ' + etat + flame(J.serie(JEU, t)) + '</span>' +
       icon('daily') + '<i class="stamp" aria-hidden="true">N° ' + t.n + '</i></button>';
   }
 
@@ -145,13 +148,13 @@
   let draft = { scenarioId: 'bunker', players: 4, solo: false };
   SCREENS.create = () => {
     const dossiers = INDEX.scenarios.filter((s) => !draft.defi || s.id === draft.scenarioId).map((s) => '<button class="dossier" data-theme="' + s.theme + '" data-pick="' + s.id + '" aria-pressed="' + (draft.scenarioId === s.id) + '">' +
-      '<span class="seal">' + glyphSvg(THEME_GLYPH[s.theme]) + '</span><b>' + esc(s.title) + '</b><i>' + esc(s.tagline) + '</i><small>' + s.year + ' — difficulté ' + '●'.repeat(s.difficulty) + '○'.repeat(3 - s.difficulty) + '</small></button>').join('');
+      '<span class="seal">' + glyphSvg(THEME_GLYPH[s.theme]) + '</span><b>' + esc(s.title) + '</b><i>' + esc(s.tagline) + '</i><small>' + s.year + ' — ' + T('difficulté') + ' ' + '●'.repeat(s.difficulty) + '○'.repeat(3 - s.difficulty) + '</small></button>').join('');
     const counts = [3, 4, 5, 6].map((n) => '<button data-n="' + n + '" aria-pressed="' + (draft.players === n) + '">' + n + '</button>').join('');
-    const jour = draft.solo && !draft.defi ? '<button class="btn ghost" data-act="daily" style="margin-top:12px">' + icon('daily') + ' Dossier du jour #' + J.today().n + '</button>' : '';
-    return '<main class="screen">' + topbar(draft.defi ? 'Dossier du jour #' + draft.defi.n : draft.solo ? 'Mode test solo' : 'Nouvelle partie', 'home') +
-      '<div class="label" style="margin-top:4px">' + (draft.defi ? 'Scénario du jour, le même pour tous' : 'Scénario') + '</div><div class="dossiers">' + dossiers + '</div>' + jour +
-      '<div class="label">Nombre de joueurs' + (draft.solo ? ' simulés' : '') + '</div><div class="counter" role="group" aria-label="Nombre de joueurs">' + counts + '</div>' +
-      '<div class="grow"></div><div style="margin-top:22px"><button class="btn" data-act="doCreate">' + (draft.solo ? 'Lancer le test' : 'Générer le code') + '</button></div></main>';
+    const jour = draft.solo && !draft.defi ? '<button class="btn ghost" data-act="daily" style="margin-top:12px">' + icon('daily') + ' ' + T('Dossier du jour #{0}', J.today().n) + '</button>' : '';
+    return '<main class="screen">' + topbar(draft.defi ? T('Dossier du jour #{0}', draft.defi.n) : T(draft.solo ? 'Mode test solo' : 'Nouvelle partie'), 'home') +
+      '<div class="label" style="margin-top:4px">' + T(draft.defi ? 'Scénario du jour, le même pour tous' : 'Scénario') + '</div><div class="dossiers">' + dossiers + '</div>' + jour +
+      '<div class="label">' + T(draft.solo ? 'Nombre de joueurs simulés' : 'Nombre de joueurs') + '</div><div class="counter" role="group" aria-label="' + T('Nombre de joueurs') + '">' + counts + '</div>' +
+      '<div class="grow"></div><div style="margin-top:22px"><button class="btn" data-act="doCreate">' + T(draft.solo ? 'Lancer le test' : 'Générer le code') + '</button></div></main>';
   };
 
   function newGame(role) {
@@ -171,12 +174,12 @@
     let qr = '';
     try { qr = Q.toSvg(Q.encode(joinUrl(game.code)), { fg: '#1d1a14', bg: '#e8dec6' }); } catch (e) { qr = ''; }
     return '<main class="screen">' + topbar(sc.title, 'quitGame') +
-      '<div class="ticket-code"><div class="label" style="margin:0">Code de la partie</div><div class="big" data-code>' + esc(game.code) + '</div></div>' +
-      '<div class="qr" aria-label="QR code de la partie">' + qr + '</div>' +
-      '<p class="prompt" style="text-align:center">Les ' + game.players + ' joueurs scannent ce QR ou tapent le code, puis choisissent chacun un numéro différent, de 1 à ' + game.players + '.</p>' +
+      '<div class="ticket-code"><div class="label" style="margin:0">' + T('Code de la partie') + '</div><div class="big" data-code>' + esc(game.code) + '</div></div>' +
+      '<div class="qr" aria-label="' + T('QR code de la partie') + '">' + qr + '</div>' +
+      '<p class="prompt" style="text-align:center">' + T('Les {0} joueurs scannent ce QR ou tapent le code, puis choisissent chacun un numéro différent, de 1 à {0}.', game.players) + '</p>' +
       '<div class="intro">' + sc.intro.map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>' +
-      '<p class="prompt" style="margin-top:12px">Lisez ce texte à voix haute, puis lancez le chrono quand tout le monde est prêt.</p>' +
-      '<button class="btn" data-act="startClock" style="margin-top:6px">Lancer le chrono (45:00)</button></main>';
+      '<p class="prompt" style="margin-top:12px">' + T('Lisez ce texte à voix haute, puis lancez le chrono quand tout le monde est prêt.') + '</p>' +
+      '<button class="btn" data-act="startClock" style="margin-top:6px">' + T('Lancer le chrono (45:00)') + '</button></main>';
   };
 
   // ---- console MJ ----
@@ -192,38 +195,38 @@
     let keys;
     if (kind === 'digits') {
       keys = '<div class="keys digits">' + ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((k) => '<button class="key" data-k="' + k + '">' + k + '</button>').join('') +
-        '<button class="key fn" data-k="DEL" aria-label="Effacer">Effacer</button><button class="key" data-k="0">0</button><button class="key fn go" data-k="OK">Valider</button></div>';
+        '<button class="key fn" data-k="DEL" aria-label="' + T('Effacer') + '">' + T('Effacer') + '</button><button class="key" data-k="0">0</button><button class="key fn go" data-k="OK">' + T('Valider') + '</button></div>';
     } else {
-      const rows = ['AZERTYUIOP', 'QSDFGHJKLM'];
+      const en = I.lang === 'en', rows = en ? ['QWERTYUIOP', 'ASDFGHJKL'] : ['AZERTYUIOP', 'QSDFGHJKLM']; // clavier QWERTY en anglais
       if (kind === 'alnum') rows.unshift('1234567890');
       keys = '<div class="keys letters">' + rows.join('').split('').map((k) => '<button class="key" data-k="' + k + '">' + k + '</button>').join('') +
-        'WXCVBN'.split('').map((k) => '<button class="key" data-k="' + k + '">' + k + '</button>').join('') +
-        '<button class="key fn wide" data-k="DEL" aria-label="Effacer">⌫</button><button class="key fn go wide" data-k="OK">OK</button></div>';
+        (en ? 'ZXCVBNM' : 'WXCVBN').split('').map((k) => '<button class="key" data-k="' + k + '">' + k + '</button>').join('') +
+        '<button class="key fn wide" data-k="DEL" aria-label="' + T('Effacer') + '">⌫</button><button class="key fn go wide" data-k="OK">OK</button></div>';
     }
     const nh = game.hints[game.stage];
     const hints = st.variants[game._setup.stages[game.stage].variant].hints.slice(0, nh).map((h, i) => '<div class="hint" data-n="' + (i + 1) + '">' + esc(h) + '</div>').join('');
-    const hintLabel = nh >= 3 ? 'Plus d\'indice' : 'Indice ' + (nh + 1) + ' (−' + E.HINT_COST[nh] / 60 + ':00)';
+    const hintLabel = nh >= 3 ? T('Plus d\'indice') : T('Indice {0} (−{1}:00)', nh + 1, E.HINT_COST[nh] / 60);
     return '<div class="vfd' + (rem < 300 ? ' low' : '') + (game.paused ? ' paused' : '') + '"><div class="time" aria-live="off"><span class="ghost" aria-hidden="true">88:88</span><span class="live" data-time>' + E.fmtTime(rem) + '</span></div>' +
-      '<div class="meta"><span>Énigme ' + (game.stage + 1) + ' sur ' + sc.stages.length + '</span><span class="pips">' + pips + '</span></div></div>' +
+      '<div class="meta"><span>' + T('Énigme {0} sur {1}', game.stage + 1, sc.stages.length) + '</span><span class="pips">' + pips + '</span></div></div>' +
       '<div class="stage-head"><h3>' + esc(st.title) + '</h3></div><p class="prompt">' + esc(st.prompt) + '</p>' +
-      '<div class="lock"><div class="slots" data-slots aria-label="Saisie">' + slots + '</div>' + keys + '</div>' +
-      '<div class="tools"><button class="btn ghost" data-act="hint" ' + (nh >= 3 ? 'disabled' : '') + '>' + hintLabel + '</button><button class="btn ghost" data-act="showWord" ' + (game.lastWord ? '' : 'disabled') + '>Dernier mot</button></div>' +
+      '<div class="lock"><div class="slots" data-slots aria-label="' + T('Saisie') + '">' + slots + '</div>' + keys + '</div>' +
+      '<div class="tools"><button class="btn ghost" data-act="hint" ' + (nh >= 3 ? 'disabled' : '') + '>' + hintLabel + '</button><button class="btn ghost" data-act="showWord" ' + (game.lastWord ? '' : 'disabled') + '>' + T('Dernier mot') + '</button></div>' +
       '<div class="hintbox">' + hints + '</div>';
   }
   const answerOf = (s) => E.normalize(game._sc.stages[s].variants[game._setup.stages[s].variant].answer);
 
   SCREENS.host = () => '<main class="screen" data-screen="host">' + topbar(game._sc.title, null,
-    '<button class="iconbtn" data-act="pause" aria-label="' + (game.paused ? 'Reprendre' : 'Pause') + '">' + icon(game.paused ? 'play' : 'pause') + '</button><button class="iconbtn" data-act="abandon" aria-label="Abandonner">' + icon('close') + '</button>') +
+    '<button class="iconbtn" data-act="pause" aria-label="' + T(game.paused ? 'Reprendre' : 'Pause') + '">' + icon(game.paused ? 'play' : 'pause') + '</button><button class="iconbtn" data-act="abandon" aria-label="' + T('Abandonner') + '">' + icon('close') + '</button>') +
     '<div data-console>' + consoleHtml() + '</div></main>';
   AFTER.host = () => { startTick(); };
 
   // ---- mode solo : console + vues joueurs dans des onglets (pas de balayage : seuls les onglets changent de joueur) ----
   SCREENS.solo = () => {
-    const tabs = ['Console'].concat([...Array(game.players)].map((_, i) => 'Joueur ' + (i + 1)));
+    const tabs = [T('Console')].concat([...Array(game.players)].map((_, i) => T('Joueur {0}', i + 1)));
     const tabHtml = tabs.map((t, i) => '<button role="tab" data-tab="' + i + '" aria-selected="' + (game.soloView === i) + '">' + t + '</button>').join('');
     const body = game.soloView === 0 ? '<div data-console>' + consoleHtml() + '</div>' : playerView(game.soloView, game.stage);
     return '<main class="screen" data-screen="solo">' + topbar(game._sc.title, null,
-      '<button class="iconbtn" data-act="pause" aria-label="' + (game.paused ? 'Reprendre' : 'Pause') + '">' + icon(game.paused ? 'play' : 'pause') + '</button><button class="iconbtn" data-act="abandon" aria-label="Abandonner">' + icon('close') + '</button>') +
+      '<button class="iconbtn" data-act="pause" aria-label="' + T(game.paused ? 'Reprendre' : 'Pause') + '">' + icon(game.paused ? 'play' : 'pause') + '</button><button class="iconbtn" data-act="abandon" aria-label="' + T('Abandonner') + '">' + icon('close') + '</button>') +
       '<div class="tabs" role="tablist">' + tabHtml + '</div>' + body + '</main>';
   };
   AFTER.solo = () => { startTick(); if (game.soloView > 0) bindPlayer(game.soloView); };
@@ -249,7 +252,7 @@
   }
 
   function pressKey(k) {
-    if (game.paused) { toast('Partie en pause'); return; }
+    if (game.paused) { toast(T('Partie en pause')); return; }
     const ans = answerOf(game.stage);
     let entry = view.entry || '';
     if (k === 'DEL') entry = entry.slice(0, -1);
@@ -262,7 +265,7 @@
   }
   function submit(entry) {
     const ans = answerOf(game.stage);
-    if (entry.length < ans.length) { toast('Code incomplet'); return; }
+    if (entry.length < ans.length) { toast(T('Code incomplet')); return; }
     const slots = $app.querySelector('[data-slots]');
     if (E.normalize(entry) === ans) {
       slots && slots.classList.add('right');
@@ -291,9 +294,9 @@
   function showWord(fresh) {
     const w = game.lastWord; if (!w) return;
     const solo = game.role === 'solo';
-    overlay('<h3>' + (fresh ? 'Énigme résolue' : 'Mot de passage') + '</h3>' +
-      '<p>' + (solo ? 'En vraie partie, chaque joueur taperait ce mot pour débloquer l\'énigme suivante.' : 'Chaque joueur tape ce mot sur son téléphone pour recevoir les pièces de l\'énigme ' + (w.stage + 2) + '.') + '</p>' +
-      '<div class="password" data-word>' + esc(w.word) + '</div><button class="btn" data-o="ok">C\'est noté</button>', () => {});
+    overlay('<h3>' + T(fresh ? 'Énigme résolue' : 'Mot de passage') + '</h3>' +
+      '<p>' + (solo ? T('En vraie partie, chaque joueur taperait ce mot pour débloquer l\'énigme suivante.') : T('Chaque joueur tape ce mot sur son téléphone pour recevoir les pièces de l\'énigme {0}.', w.stage + 2)) + '</p>' +
+      '<div class="password" data-word>' + esc(w.word) + '</div><button class="btn" data-o="ok">' + T('C\'est noté') + '</button>', () => {});
   }
 
   function finish(won, why) {
@@ -303,7 +306,7 @@
     const used = E.GAME_SECONDS - rem;
     const nh = game.hints.reduce((a, b) => a + b, 0);
     const stars = won ? E.stars(rem, false) : 0;
-    game.ended = { won, remaining: rem, used, hints: nh, stars, share: E.shareText(game._sc.title, stars, used, nh, !won), abandon: why === 'abandon' };
+    game.ended = { won, remaining: rem, used, hints: nh, stars, share: E.shareText(game._sc.title, stars, used, nh, !won, T), abandon: why === 'abandon' };
     if (game.defi && !game.ended.abandon) recordDaily(game, won ? Math.round(rem) : 0);
     saveGame();
     keepAwake(false); A.stopDrone();
@@ -315,37 +318,39 @@
   function recordDaily(g, score) {
     const e = g.ended, avant = J.record(JEU, g.defi, score, '');
     e.share = J.shareText(E.shareDaily({ n: g.defi.n, title: g._sc.title, stars: e.stars, used: e.used, hints: g.hints,
-      solved: e.won ? g.hints.length : g.stage, wrong: g.wrong, players: g.players, timedOut: !e.won, serie: avant.count }));
+      solved: e.won ? g.hints.length : g.stage, wrong: g.wrong, players: g.players, timedOut: !e.won, serie: avant.count }, T));
     const s = J.record(JEU, g.defi, score, e.share);
     e.daily = { serie: s.count, best: s.best,
-      resume: 'Dossier du jour ' + g.defi.n + (e.won ? ' clos, ' + plural(e.stars, 'étoile') : ', hors temps') + ', série de ' + plural(s.count, 'jour') };
+      resume: e.won ? T('Dossier du jour {0} clos, {1}, série de {2}', g.defi.n, TN(e.stars, '{0} étoile', '{0} étoiles'), days(s.count)) : T('Dossier du jour {0}, hors temps, série de {1}', g.defi.n, days(s.count)) };
   }
 
   SCREENS.end = () => {
     const g = game, sc = g._sc, e = g.ended;
     const st = [0, 1, 2].map((i) => '<span class="' + (i < e.stars ? 'on' : 'off') + '"><svg viewBox="0 0 24 24"><path d="' + IC.star.match(/d="([^"]+)"/)[1] + '"/></svg></span>').join('');
-    const finalWord = e.won && g.lastWord ? '<p class="prompt">Mot final pour lire l\'épilogue sur les téléphones des joueurs :</p><div class="password" data-word>' + esc(g.lastWord.word) + '</div>' : '';
+    const finalWord = e.won && g.lastWord ? '<p class="prompt">' + T('Mot final pour lire l\'épilogue sur les téléphones des joueurs :') + '</p><div class="password" data-word>' + esc(g.lastWord.word) + '</div>' : '';
     return '<main class="screen end">' +
-      (g.defi ? '<div class="label daily-tag">Dossier du jour #' + g.defi.n + '</div>' : '') +
-      '<div class="verdict">' + (e.won ? 'Dossier clos' : e.abandon ? 'Abandon' : 'Temps écoulé') + '</div>' +
+      (g.defi ? '<div class="label daily-tag">' + T('Dossier du jour #{0}', g.defi.n) + '</div>' : '') +
+      '<div class="verdict">' + T(e.won ? 'Dossier clos' : e.abandon ? 'Abandon' : 'Temps écoulé') + '</div>' +
       '<p class="prompt">' + esc(sc.title) + '</p>' +
-      '<div class="stars" aria-label="' + e.stars + ' étoile' + (e.stars > 1 ? 's' : '') + ' sur 3">' + st + '</div>' +
-      '<div class="stats"><div><b>' + E.fmtTime(e.used) + '</b><small>temps</small></div><div><b>' + e.hints + '</b><small>indice' + (e.hints > 1 ? 's' : '') + '</small></div><div><b>' + g.wrong + '</b><small>erreur' + (g.wrong > 1 ? 's' : '') + '</small></div></div>' +
+      '<div class="stars" aria-label="' + TN(e.stars, '{0} étoile sur 3', '{0} étoiles sur 3') + '">' + st + '</div>' +
+      '<div class="stats"><div><b>' + E.fmtTime(e.used) + '</b><small>' + T('temps') + '</small></div><div><b>' + e.hints + '</b><small>' + TN(e.hints, 'indice', 'indices') + '</small></div><div><b>' + g.wrong + '</b><small>' + TN(g.wrong, 'erreur', 'erreurs') + '</small></div></div>' +
       '<div class="intro" style="text-align:left;margin-bottom:14px">' + (e.won ? sc.ending : sc.failEnding).map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>' +
       (game.role === 'host' ? finalWord : '') +
-      (e.daily ? '<div class="streak">' + flame(e.daily.serie) + '<span>Série : ' + plural(e.daily.serie, 'jour') + ' (record ' + e.daily.best + ')</span><small>Prochain dossier dans ' + untilMidnight() + '</small></div><p class="sr">' + esc(e.daily.resume) + '</p>' : '') +
-      (g.defi && e.abandon ? '<p class="prompt">Abandon : ce dossier du jour ne compte pas pour la série.</p>' : '') +
+      (e.daily ? '<div class="streak">' + flame(e.daily.serie) + '<span>' + T('Série : {0} (record {1})', days(e.daily.serie), e.daily.best) + '</span><small>' + T('Prochain dossier dans {0}', untilMidnight()) + '</small></div><p class="sr">' + esc(e.daily.resume) + '</p>' : '') +
+      (g.defi && e.abandon ? '<p class="prompt">' + T('Abandon : ce dossier du jour ne compte pas pour la série.') + '</p>' : '') +
       '<div class="share-text" data-share' + (e.daily ? ' aria-hidden="true"' : '') + '>' + esc(e.share) + '</div>' +
       '<div class="sr" role="status" aria-live="polite" data-sharestatus></div><div data-sharebox></div>' +
-      '<div class="stack"><button class="btn" data-act="share">' + icon('share') + ' Partager le résultat</button><button class="btn ghost" data-act="newGame">Retour à l\'accueil</button></div></main>';
+      '<div class="stack"><button class="btn" data-act="share">' + icon('share') + ' ' + T('Partager le résultat') + '</button>' +
+      (e.daily ? '<button class="btn ghost" data-act="shareImage">' + icon('share') + ' ' + T('Partager l\'image') + '</button>' : '') +
+      '<button class="btn ghost" data-act="newGame">' + T('Retour à l\'accueil') + '</button></div></main>';
   };
 
   // ---- rejoindre ----
-  SCREENS.join = () => '<main class="screen">' + topbar('Rejoindre', 'home') +
-    '<div class="label">Code donné par le maître du jeu</div>' +
-    '<input class="codefield" data-codein inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BNK-4-XXXX" maxlength="12" value="' + esc(view.prefill || '') + '" aria-label="Code de la partie">' +
+  SCREENS.join = () => '<main class="screen">' + topbar(T('Rejoindre'), 'home') +
+    '<div class="label">' + T('Code donné par le maître du jeu') + '</div>' +
+    '<input class="codefield" data-codein inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BNK-4-XXXX" maxlength="12" value="' + esc(view.prefill || '') + '" aria-label="' + T('Code de la partie') + '">' +
     '<div class="err" data-err role="alert"></div>' +
-    ('BarcodeDetector' in window ? '<button class="btn ghost" data-act="scan" style="margin-top:4px">' + icon('scan') + ' Scanner le QR</button>' : '<p class="prompt">Astuce : scannez le QR avec l\'appareil photo du téléphone, la partie s\'ouvre directement.</p>') +
+    ('BarcodeDetector' in window ? '<button class="btn ghost" data-act="scan" style="margin-top:4px">' + icon('scan') + ' ' + T('Scanner le QR') + '</button>' : '<p class="prompt">' + T('Astuce : scannez le QR avec l\'appareil photo du téléphone, la partie s\'ouvre directement.') + '</p>') +
     '<div data-seat></div><div class="grow"></div></main>';
   AFTER.join = () => {
     const inp = $app.querySelector('[data-codein]');
@@ -355,16 +360,16 @@
       const err = $app.querySelector('[data-err]'), seat = $app.querySelector('[data-seat]');
       const clean = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
       if (!d) {
-        err.textContent = clean.length >= 8 ? 'Code inconnu. Vérifiez chaque caractère avec le maître du jeu.' : '';
+        err.textContent = clean.length >= 8 ? T('Code inconnu. Vérifiez chaque caractère avec le maître du jeu.') : '';
         seat.innerHTML = ''; return;
       }
       const sc = byPrefix(d.prefix);
-      if (!sc) { err.textContent = 'Ce scénario n\'est pas installé sur ce téléphone.'; seat.innerHTML = ''; return; }
+      if (!sc) { err.textContent = T('Ce scénario n\'est pas installé sur ce téléphone.'); seat.innerHTML = ''; return; }
       err.textContent = '';
       inp.value = d.code;
-      seat.innerHTML = '<div class="label">' + esc(sc.title) + ' — quel joueur êtes-vous ?</div><div class="counter" style="grid-template-columns:repeat(' + Math.min(d.players, 6) + ',1fr)">' +
+      seat.innerHTML = '<div class="label">' + T('{0} — quel joueur êtes-vous ?', esc(sc.title)) + '</div><div class="counter" style="grid-template-columns:repeat(' + Math.min(d.players, 6) + ',1fr)">' +
         [...Array(d.players)].map((_, i) => '<button data-seatn="' + (i + 1) + '">' + (i + 1) + '</button>').join('') + '</div>' +
-        '<p class="prompt" style="margin-top:10px">Chaque joueur doit prendre un numéro différent.</p>';
+        '<p class="prompt" style="margin-top:10px">' + T('Chaque joueur doit prendre un numéro différent.') + '</p>';
       view.decoded = d;
     };
     inp.addEventListener('input', check);
@@ -376,8 +381,8 @@
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    } catch (e) { toast('Caméra indisponible'); return; }
-    const o = overlay('<h3>Scanner</h3><video playsinline muted style="width:100%;border-radius:10px;background:#000"></video><button class="btn ghost" data-o="x" style="margin-top:12px">Annuler</button>', () => { stop(); });
+    } catch (e) { toast(T('Caméra indisponible')); return; }
+    const o = overlay('<h3>' + T('Scanner') + '</h3><video playsinline muted style="width:100%;border-radius:10px;background:#000"></video><button class="btn ghost" data-o="x" style="margin-top:12px">' + T('Annuler') + '</button>', () => { stop(); });
     const video = o.querySelector('video'); video.srcObject = stream; await video.play();
     const det = new window.BarcodeDetector({ formats: ['qr_code'] });
     let alive = true;
@@ -422,7 +427,7 @@
     z.hotspots.forEach((h, i) => {
       const done = found.indexOf(i) >= 0, k = c.spots[i];
       const cls = 'hs' + (done ? (k >= 0 ? ' got' : ' empty') : '') + (h.lock && !done ? ' locked' : '');
-      o += '<g class="' + cls + '" data-spot="' + i + '" role="button" tabindex="0" aria-label="Fouiller ' + esc(h.label) + (done ? ' (déjà fouillé)' : '') + '">' +
+      o += '<g class="' + cls + '" data-spot="' + i + '" role="button" tabindex="0" aria-label="' + T('Fouiller {0}', esc(h.label)) + (done ? T(' (déjà fouillé)') : '') + '">' +
         '<circle class="hit" cx="' + h.x + '" cy="' + h.y + '" r="' + Math.max(h.r, 20) + '"/>' +
         '<circle class="ring" cx="' + h.x + '" cy="' + h.y + '" r="' + h.r + '"/>' +
         (done ? (k >= 0 ? '<path class="mark" d="M' + (h.x - 6) + ' ' + h.y + 'l4 5l9-10"/>' : '<path class="mark" d="M' + (h.x - 5) + ' ' + (h.y - 5) + 'l10 10M' + (h.x + 5) + ' ' + (h.y - 5) + 'l-10 10"/>')
@@ -435,30 +440,30 @@
   function playerView(p, stage) {
     const c = ctxOf(p, stage), u = ui(p);
     const inv = invOf(p, stage), found = foundOf(stage, p);
-    const tabs = '<div class="seg" role="tablist" aria-label="Vue du joueur">' +
-      '<button role="tab" data-pv="search" aria-selected="' + (u.pv === 'search') + '">Fouiller</button>' +
-      '<button role="tab" data-pv="inv" aria-selected="' + (u.pv === 'inv') + '">Mes trouvailles' + (inv.length ? ' <span class="count">' + inv.length + '</span>' : '') + '</button></div>';
-    const head = '<div class="pl-head"><span class="badge">J' + p + '</span><div class="what"><small>Énigme ' + (stage + 1) + ' sur ' + c.sc.stages.length + ' — ' + esc(c.zone.name) + '</small><b>' + esc(c.st.title) + '</b></div></div>';
+    const tabs = '<div class="seg" role="tablist" aria-label="' + T('Vue du joueur') + '">' +
+      '<button role="tab" data-pv="search" aria-selected="' + (u.pv === 'search') + '">' + T('Fouiller') + '</button>' +
+      '<button role="tab" data-pv="inv" aria-selected="' + (u.pv === 'inv') + '">' + T('Mes trouvailles') + (inv.length ? ' <span class="count">' + inv.length + '</span>' : '') + '</button></div>';
+    const head = '<div class="pl-head"><span class="badge">' + T('J{0}', p) + '</span><div class="what"><small>' + T('Énigme {0} sur {1}', stage + 1, c.sc.stages.length) + ' — ' + esc(c.zone.name) + '</small><b>' + esc(c.st.title) + '</b></div></div>';
     let body;
     if (u.pv === 'search') {
       const chips = c.zone.hotspots.map((h, i) => {
         const done = found.indexOf(i) >= 0, k = c.spots[i];
-        const st = !done ? (h.lock ? 'Coincé' : 'À fouiller') : k >= 0 ? 'Trouvé' : k <= -2 ? 'Fouillé' : 'Rien';
+        const st = T(!done ? (h.lock ? 'Coincé' : 'À fouiller') : k >= 0 ? 'Trouvé' : k <= -2 ? 'Fouillé' : 'Rien');
         return '<button class="spot' + (done ? ' done' : '') + (done && k >= 0 ? ' got' : '') + '" data-spot="' + i + '"><span>' + esc(cap(h.label)) + '</span><small>' + st + '</small></button>';
       }).join('');
       body = '<div class="scene-wrap">' + sceneSvg(c, p, stage) + '<div class="zone-name">' + esc(c.zone.name) + '</div></div>' +
-        '<p class="rule">Touchez un endroit pour le fouiller. Décrivez vos trouvailles à voix haute, sans montrer votre écran.</p>' +
+        '<p class="rule">' + T('Touchez un endroit pour le fouiller. Décrivez vos trouvailles à voix haute, sans montrer votre écran.') + '</p>' +
         '<div class="spots">' + chips + '</div>' +
-        '<p class="progress">' + found.length + ' sur ' + c.zone.hotspots.length + ' endroits fouillés</p>';
+        '<p class="progress">' + T('{0} sur {1} endroits fouillés', found.length, c.zone.hotspots.length) + '</p>';
     } else if (!inv.length) {
-      body = '<div class="inv-empty"><p>Rien pour l\'instant.</p><p>Fouillez ' + esc(c.zone.name.toLowerCase()) + ' : vos pièces sont cachées quelque part.</p><button class="btn ghost" data-pv="search">Fouiller</button></div>';
+      body = '<div class="inv-empty"><p>' + T('Rien pour l\'instant.') + '</p><p>' + T('Fouillez {0} : vos pièces sont cachées quelque part.', esc(c.zone.name.toLowerCase())) + '</p><button class="btn ghost" data-pv="search">' + T('Fouiller') + '</button></div>';
     } else {
       u.idx = Math.max(0, Math.min(u.idx, inv.length - 1));
-      const dots = inv.map((_, i) => '<button class="dot' + (i === u.idx ? ' on' : '') + '" data-inv="' + i + '" aria-label="Pièce ' + (i + 1) + '"></button>').join('');
+      const dots = inv.map((_, i) => '<button class="dot' + (i === u.idx ? ' on' : '') + '" data-inv="' + i + '" aria-label="' + T('Pièce {0}', i + 1) + '"></button>').join('');
       body = '<div class="inv" data-invwrap>' +
-        '<div class="inv-bar"><button class="navbtn" data-invstep="-1" aria-label="Pièce précédente" ' + (u.idx === 0 ? 'disabled' : '') + '>' + icon('back') + '</button>' +
-        '<div class="inv-pos" aria-live="polite"><b>Pièce ' + (u.idx + 1) + ' / ' + inv.length + '</b><small>' + esc(cap(c.zone.hotspots[inv[u.idx].spot].label)) + '</small></div>' +
-        '<button class="navbtn next" data-invstep="1" aria-label="Pièce suivante" ' + (u.idx === inv.length - 1 ? 'disabled' : '') + '>' + icon('back') + '</button></div>' +
+        '<div class="inv-bar"><button class="navbtn" data-invstep="-1" aria-label="' + T('Pièce précédente') + '" ' + (u.idx === 0 ? 'disabled' : '') + '>' + icon('back') + '</button>' +
+        '<div class="inv-pos" aria-live="polite"><b>' + T('Pièce {0} / {1}', u.idx + 1, inv.length) + '</b><small>' + esc(cap(c.zone.hotspots[inv[u.idx].spot].label)) + '</small></div>' +
+        '<button class="navbtn next" data-invstep="1" aria-label="' + T('Pièce suivante') + '" ' + (u.idx === inv.length - 1 ? 'disabled' : '') + '>' + icon('back') + '</button></div>' +
         (inv.length > 1 ? '<div class="inv-dots">' + dots + '</div>' : '') +
         '<div class="inv-doc" data-swipe>' + D.docHtml(inv[u.idx].doc) + '</div></div>';
     }
@@ -547,9 +552,9 @@
   }
   function forceSheet(p, i) {
     const h = ctxOf(p, game.stage).zone.hotspots[i];
-    const w = sheet('<h3>' + esc(cap(h.label)) + '</h3><p>C\'est coincé. Il va falloir forcer.</p>' +
-      '<button class="hold" data-hold><span class="fill"></span><span class="lbl">Maintenir pour forcer</span></button>' +
-      '<button class="btn ghost" data-sheet="close">Laisser</button>');
+    const w = sheet('<h3>' + esc(cap(h.label)) + '</h3><p>' + T('C\'est coincé. Il va falloir forcer.') + '</p>' +
+      '<button class="hold" data-hold><span class="fill"></span><span class="lbl">' + T('Maintenir pour forcer') + '</span></button>' +
+      '<button class="btn ghost" data-sheet="close">' + T('Laisser') + '</button>');
     const b = w.querySelector('[data-hold]');
     let tm = null;
     const startH = (e) => { if (e) e.preventDefault(); if (tm) return; b.classList.add('holding'); buzz(15); tm = setTimeout(done, 900); };
@@ -573,14 +578,14 @@
         const docs = c.items[c.hand[k]].docs;
         const inv = invOf(p, stage);
         const first = inv.findIndex((x) => x.spot === i);
-        return '<div class="found"><div class="found-title">Trouvé !</div>' +
+        return '<div class="found"><div class="found-title">' + T('Trouvé !') + '</div>' +
           docs.map((d) => '<div class="tag ' + esc(d.style) + '"><b>' + esc(d.title) + '</b><small>' + esc(d.ref) + '</small></div>').join('') +
-          '</div><div class="row"><button class="btn ghost" data-sheet="close">Continuer</button><button class="btn" data-goinv="' + first + '">Lire</button></div>';
+          '</div><div class="row"><button class="btn ghost" data-sheet="close">' + T('Continuer') + '</button><button class="btn" data-goinv="' + first + '">' + T('Lire') + '</button></div>';
       }
-      const txt = k <= -2 ? c.zone.flavor[-2 - k] : 'Rien ici.';
-      return '<p class="flavor' + (k <= -2 ? '' : ' nothing') + '">' + esc(txt) + '</p><button class="btn ghost" data-sheet="close">Continuer</button>';
+      const txt = k <= -2 ? c.zone.flavor[-2 - k] : T('Rien ici.');
+      return '<p class="flavor' + (k <= -2 ? '' : ' nothing') + '">' + esc(txt) + '</p><button class="btn ghost" data-sheet="close">' + T('Continuer') + '</button>';
     };
-    const w = sheet('<h3>' + esc(cap(h.label)) + '</h3><div class="search-anim"' + (fresh ? '' : ' hidden') + '><div class="beam"></div><span>Vous fouillez…</span></div><div class="result"' + (fresh ? ' hidden' : '') + '>' + result() + '</div>');
+    const w = sheet('<h3>' + esc(cap(h.label)) + '</h3><div class="search-anim"' + (fresh ? '' : ' hidden') + '><div class="beam"></div><span>' + T('Vous fouillez…') + '</span></div><div class="result"' + (fresh ? ' hidden' : '') + '>' + result() + '</div>');
     w.addEventListener('click', (e) => {
       const g = e.target.closest('[data-goinv]');
       if (g) { w.remove(); ui(p).pv = 'inv'; ui(p).idx = +g.dataset.goinv; rerenderPlayer(p); }
@@ -599,17 +604,17 @@
   }
 
   function passBar(last) {
-    return '<form class="passbar" data-pass><input data-passin autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="' + (last ? 'Mot final (épilogue)' : 'Mot de passage') + '" aria-label="Mot de passage"><button class="btn" type="submit">Valider</button></form>';
+    return '<form class="passbar" data-pass><input data-passin autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="' + T(last ? 'Mot final (épilogue)' : 'Mot de passage') + '" aria-label="' + T('Mot de passage') + '"><button class="btn" type="submit">' + T('Valider') + '</button></form>';
   }
 
   SCREENS.player = () => {
     const sc = game._sc;
     if (game.stage >= sc.stages.length) {
-      return '<main class="screen end">' + '<div class="verdict">Dossier clos</div><p class="prompt">' + esc(sc.title) + '</p>' +
+      return '<main class="screen end">' + '<div class="verdict">' + T('Dossier clos') + '</div><p class="prompt">' + esc(sc.title) + '</p>' +
         '<div class="intro" style="text-align:left;margin:16px 0">' + sc.ending.map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>' +
-        '<button class="btn ghost" data-act="leave">Retour à l\'accueil</button></main>';
+        '<button class="btn ghost" data-act="leave">' + T('Retour à l\'accueil') + '</button></main>';
     }
-    return '<main class="screen" data-screen="player">' + topbar(sc.title, null, '<button class="iconbtn" data-act="leave" aria-label="Quitter">' + icon('close') + '</button>') +
+    return '<main class="screen" data-screen="player">' + topbar(sc.title, null, '<button class="iconbtn" data-act="leave" aria-label="' + T('Quitter') + '">' + icon('close') + '</button>') +
       playerView(game.playerNo, game.stage) + '<div class="grow"></div>' + passBar(game.stage === sc.stages.length - 1) + '</main>';
   };
   AFTER.player = () => {
@@ -627,32 +632,24 @@
         document.body.classList.add('flash-ok'); setTimeout(() => document.body.classList.remove('flash-ok'), 900);
       } else {
         A.play('fail'); buzz([120, 60, 120]);
-        inp.value = ''; inp.placeholder = 'Ce n\'est pas le bon mot';
+        inp.value = ''; inp.placeholder = T('Ce n\'est pas le bon mot');
         f.style.animation = 'shake .4s'; setTimeout(() => { f.style.animation = ''; }, 420);
       }
     });
   };
 
   // ---- comment jouer / réglages ----
-  SCREENS.howto = () => {
-    const ill1 = '<svg viewBox="0 0 112 112" aria-hidden="true"><rect x="30" y="10" width="52" height="92" rx="8" fill="#252c22" stroke="currentColor" stroke-width="2"/><rect x="40" y="26" width="32" height="32" fill="#e8dec6"/><path d="M44 30h6v6h-6zM62 30h6v6h-6zM44 48h6v6h-6zM56 42h4v4h-4zM62 50h4v4h-4z" fill="#1d1a14"/><text x="56" y="78" font-family="Stencil" font-weight="900" font-size="12" text-anchor="middle" fill="var(--glow)">BNK-4</text><circle cx="56" cy="92" r="4" fill="var(--glow)"/></svg>';
-    const ill2 = '<svg viewBox="0 0 112 112" aria-hidden="true"><g transform="rotate(-10 36 60)"><rect x="12" y="24" width="44" height="60" fill="#e8dec6"/><path d="M18 34h30M18 42h22M18 50h28" stroke="#5b5244" stroke-width="2"/></g><g transform="rotate(8 76 60)"><rect x="54" y="26" width="44" height="60" fill="#f1e9a8"/><path d="M60 38h30M60 46h20M60 54h26" stroke="#23285a" stroke-width="2"/></g><path d="M40 98q16 -10 32 0" stroke="var(--glow)" stroke-width="2.5" fill="none"/><circle cx="56" cy="16" r="6" fill="none" stroke="var(--glow)" stroke-width="2"/></svg>';
-    const ill3 = '<svg viewBox="0 0 112 112" aria-hidden="true"><rect x="14" y="20" width="84" height="76" rx="10" fill="#3b3f37"/><rect x="22" y="28" width="68" height="20" rx="4" fill="#0d0f0c"/><text x="56" y="44" font-family="Stencil" font-weight="900" font-size="16" text-anchor="middle" fill="#8fd18a" letter-spacing="3">4758</text>' +
-      [0, 1, 2].map((r) => [0, 1, 2].map((c) => '<rect x="' + (26 + c * 22) + '" y="' + (54 + r * 13) + '" width="16" height="9" rx="2" fill="#5a5f55"/>').join('')).join('') + '</svg>';
-    return '<main class="screen">' + topbar('Comment jouer', 'home') +
-      '<div class="howto">' +
-      '<div class="step">' + ill1 + '<div><h4>Un maître du jeu</h4><p>Un téléphone crée la partie et affiche un code. Il garde le chrono, la serrure et les indices.</p></div></div>' +
-      '<div class="step">' + ill2 + '<div><h4>Chacun sa pièce à fouiller</h4><p>Chaque joueur rejoint avec le code et fouille une salle différente : tiroirs, poches, dessous de matelas. Décrivez vos trouvailles à voix haute, sans montrer votre écran.</p></div></div>' +
-      '<div class="step">' + ill3 + '<div><h4>La serrure</h4><p>Quand le groupe a trouvé, il tape la réponse sur le téléphone du maître du jeu. Un mot de passage s\'affiche : chacun le tape pour recevoir la suite.</p></div></div>' +
-      '</div><div class="intro" style="margin-top:20px"><p>De 3 à 6 joueurs, 45 minutes. Une erreur coûte 10 secondes, un indice de 1 à 3 minutes. Finissez avec plus de 15 minutes pour trois étoiles.</p></div>' +
-      '<div class="grow"></div><button class="btn" data-act="create" style="margin-top:18px">Créer une partie</button></main>';
-  };
-  SCREENS.settings = () => '<main class="screen">' + topbar('Réglages', 'home') +
-    '<div class="toggle"><span>Son<small>Ambiance et signaux générés en direct</small></span><button class="switch" role="switch" data-set="sound" aria-checked="' + settings.sound + '" aria-label="Son"></button></div>' +
-    '<div class="toggle"><span>Vibrations<small>Retour au toucher et aux réponses</small></span><button class="switch" role="switch" data-set="vibrate" aria-checked="' + settings.vibrate + '" aria-label="Vibrations"></button></div>' +
-    '<div class="toggle"><span>Partie en cours<small>' + (game && !game.ended ? 'Une partie est sauvegardée sur ce téléphone' : 'Aucune') + '</small></span><button class="btn danger" data-act="wipe" style="min-height:44px;font-size:17px" ' + (game ? '' : 'disabled') + '>Effacer</button></div>' +
-    '<p class="prompt" style="margin-top:20px">Fragments fonctionne sans connexion. Les parties restent sur ce téléphone.</p>' +
-    '<p class="prompt"><a class="legal" href="privacy.html">Confidentialité, conditions et mentions légales</a></p></main>';
+  SCREENS.howto = () => window.FragHowto(T, topbar);
+  SCREENS.settings = () => '<main class="screen">' + topbar(T('Réglages'), 'home') +
+    langRow() +
+    '<div class="toggle"><span>' + T('Son') + '<small>' + T('Ambiance et signaux générés en direct') + '</small></span><button class="switch" role="switch" data-set="sound" aria-checked="' + settings.sound + '" aria-label="' + T('Son') + '"></button></div>' +
+    '<div class="toggle"><span>' + T('Vibrations') + '<small>' + T('Retour au toucher et aux réponses') + '</small></span><button class="switch" role="switch" data-set="vibrate" aria-checked="' + settings.vibrate + '" aria-label="' + T('Vibrations') + '"></button></div>' +
+    '<div class="toggle"><span>' + T('Partie en cours') + '<small>' + T(game && !game.ended ? 'Une partie est sauvegardée sur ce téléphone' : 'Aucune') + '</small></span><button class="btn danger" data-act="wipe" style="min-height:44px;font-size:17px" ' + (game ? '' : 'disabled') + '>' + T('Effacer') + '</button></div>' +
+    '<p class="prompt" style="margin-top:20px">' + T('Fragments fonctionne sans connexion. Les parties restent sur ce téléphone.') + '</p>' +
+    window.FragAutresJeux.html(T) +
+    '<p class="prompt"><a class="legal" href="privacy.html' + (I.lang === 'en' ? '#en' : '') + '">' + T('Confidentialité, conditions et mentions légales') + '</a></p></main>';
+  const langRow = () => '<div class="toggle"><span>' + T('Langue') + '<small>' + T('Interface et scénarios') + '</small></span><div class="langs" role="group" aria-label="' + T('Langue') + '">' +
+    [['fr', 'FR'], ['en', 'EN']].map(([l, n]) => '<button data-lang="' + l + '" aria-pressed="' + (I.lang === l) + '" lang="' + l + '">' + n + '</button>').join('') + '</div></div>';
 
   // =============== ACTIONS ===============
   const ACTIONS = {
@@ -678,34 +675,35 @@
     hint: () => {
       const n = game.hints[game.stage];
       if (n >= 3) return;
-      overlay('<h3>Indice ' + (n + 1) + '</h3><p>Il coûte ' + (E.HINT_COST[n] / 60) + ' minute' + (n ? 's' : '') + ' au chrono. Le groupe est d\'accord ?</p><div class="row"><button class="btn ghost" data-o="no">Annuler</button><button class="btn" data-o="yes">Révéler</button></div>', (o) => {
+      overlay('<h3>' + T('Indice {0}', n + 1) + '</h3><p>' + TN(E.HINT_COST[n] / 60, 'Il coûte {0} minute au chrono. Le groupe est d\'accord ?', 'Il coûte {0} minutes au chrono. Le groupe est d\'accord ?') + '</p><div class="row"><button class="btn ghost" data-o="no">' + T('Annuler') + '</button><button class="btn" data-o="yes">' + T('Révéler') + '</button></div>', (o) => {
         if (o !== 'yes') return;
         game.penalty += E.HINT_COST[n]; game.hints[game.stage] = n + 1; saveGame(); A.play('hint'); buzz(20); refreshConsole();
       });
     },
     showWord: () => showWord(false),
     abandon: () => {
-      overlay('<h3>Abandonner ?</h3><p>Le chrono s\'arrête et la partie est perdue.</p><div class="row"><button class="btn ghost" data-o="no">Continuer</button><button class="btn danger" data-o="yes">Abandonner</button></div>', (o) => { if (o === 'yes') finish(false, 'abandon'); });
+      overlay('<h3>' + T('Abandonner ?') + '</h3><p>' + T('Le chrono s\'arrête et la partie est perdue.') + '</p><div class="row"><button class="btn ghost" data-o="no">' + T('Continuer') + '</button><button class="btn danger" data-o="yes">' + T('Abandonner') + '</button></div>', (o) => { if (o === 'yes') finish(false, 'abandon'); });
     },
     quitGame: () => { game = null; saveGame(); go('home'); },
     share: async () => {
       const text = game.ended.share, r = await J.share(text); // null : partage annulé
       if (!r) return;
-      const msg = { partage: 'Résultat partagé', copie: 'Résultat copié', manuel: 'Copiez le texte ci-dessous' }[r];
+      const msg = T({ partage: 'Résultat partagé', copie: 'Résultat copié', manuel: 'Copiez le texte ci-dessous' }[r]);
       const st = $app.querySelector('[data-sharestatus]'), box = $app.querySelector('[data-sharebox]');
       if (st) st.textContent = msg;
       if (r === 'copie') toast(msg);
       if (r === 'manuel' && box) {
-        box.innerHTML = '<label class="label" for="shareTa">Texte à copier</label><textarea id="shareTa" class="share-ta" readonly rows="6">' + esc(text) + '</textarea>';
+        box.innerHTML = '<label class="label" for="shareTa">' + T('Texte à copier') + '</label><textarea id="shareTa" class="share-ta" readonly rows="6">' + esc(text) + '</textarea>';
         const ta = box.querySelector('textarea'); ta.focus(); ta.select();
       }
     },
+    shareImage: () => window.FragShareImage.run(game, T, $app.querySelector('[data-sharestatus]'), toast), // carte 1080×1920 : js/share-image.js
     newGame: () => { game = null; saveGame(); go('home'); },
     leave: () => {
       if (game && game.ended) { game = null; saveGame(); go('home'); return; }
-      overlay('<h3>Quitter la partie ?</h3><p>Vous pourrez la reprendre depuis l\'accueil.</p><div class="row"><button class="btn ghost" data-o="no">Rester</button><button class="btn" data-o="yes">Quitter</button></div>', (o) => { if (o === 'yes') { keepAwake(false); A.stopDrone(); go('home'); } });
+      overlay('<h3>' + T('Quitter la partie ?') + '</h3><p>' + T('Vous pourrez la reprendre depuis l\'accueil.') + '</p><div class="row"><button class="btn ghost" data-o="no">' + T('Rester') + '</button><button class="btn" data-o="yes">' + T('Quitter') + '</button></div>', (o) => { if (o === 'yes') { keepAwake(false); A.stopDrone(); go('home'); } });
     },
-    wipe: () => { game = null; saveGame(); toast('Partie effacée'); go('settings'); }
+    wipe: () => { game = null; saveGame(); toast(T('Partie effacée')); go('settings'); }
   };
   function startClock() {
     game.started = true; game.paused = false; game.runningSince = Date.now(); saveGame();
@@ -731,6 +729,7 @@
     if (t.dataset.pick) { draft.scenarioId = t.dataset.pick; document.body.dataset.theme = SCN[draft.scenarioId].theme; $app.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', b === t)); return; }
     if (t.dataset.n) { draft.players = +t.dataset.n; $app.querySelectorAll('[data-n]').forEach((b) => b.setAttribute('aria-pressed', b === t)); return; }
     if (t.dataset.tab) { game.soloView = +t.dataset.tab; saveGame(); go('solo', { entry: view.entry, ui: view.ui, forced: view.forced }); return; }
+    if (t.dataset.lang) { if (t.dataset.lang !== I.lang) { I.setLang(t.dataset.lang); location.reload(); } return; }
     if (t.dataset.set) { settings[t.dataset.set] = !settings[t.dataset.set]; save(LS_SET, settings); A.setEnabled(settings.sound); t.setAttribute('aria-checked', settings[t.dataset.set]); if (t.dataset.set === 'vibrate') buzz(30); return; }
     if (t.dataset.seatn) {
       const d = view.decoded, sc = byPrefix(d.prefix);
@@ -773,7 +772,7 @@
 
   // ---------- démarrage ----------
   (async function boot() {
-    try { await loadData(); } catch (e) { $app.innerHTML = '<main class="screen"><h2>Données introuvables</h2><p>Rechargez la page avec une connexion pour la première installation.</p></main>'; return; }
+    try { await loadData(); } catch (e) { $app.innerHTML = '<main class="screen"><h2>' + T('Données introuvables') + '</h2><p>' + T('Rechargez la page avec une connexion pour la première installation.') + '</p></main>'; return; }
     if (game) { try { hydrate(game); } catch (e) { game = null; save(LS_GAME, null); } }
     const m = location.hash.match(/j=([A-Za-z0-9-]+)/);
     if (m) { history.replaceState(null, '', location.pathname); go('join', { prefill: m[1] }); }

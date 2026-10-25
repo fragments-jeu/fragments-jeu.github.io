@@ -7,16 +7,18 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const inline = (s) => esc(s)
     .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
-    .replace(/\[\[(X+)\]\]/g, (m, x) => '<span class="redact" aria-label="texte caviardé">' + x.replace(/X/g, '█') + '</span>');
+    .replace(/\[\[(X+)\]\]/g, (m, x) => '<span class="redact" aria-label="' + tr('texte caviardé') + '">' + x.replace(/X/g, '█') + '</span>');
   const LAMP = { r: '#ff4b3a', v: '#52e06a', b: '#4aa8ff', a: '#ffb02e' };
-  const LAMP_L = { r: 'R', v: 'V', b: 'B', a: 'A' };
+  // Textes : js/i18n.js (repli français si absent) ; en anglais le voyant vert est noté G.
+  const tr = function (s) { return root.FragI18n ? root.FragI18n.t.apply(null, arguments) : s; };
+  const lampL = (c) => (root.FragI18n && root.FragI18n.lang === 'en' ? { r: 'R', v: 'G', b: 'B', a: 'A' } : { r: 'R', v: 'V', b: 'B', a: 'A' })[c];
 
   function glyph(name, x, y, size, extra) {
     const p = GLYPHS[name] || '';
     const k = size / 24;
     return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><path d="' + p + '" fill="none" stroke="currentColor" stroke-width="' + (1.7 / Math.max(k, .5) * k > 0 ? 1.8 : 1.8) + '" stroke-linecap="round" stroke-linejoin="round" ' + (extra || '') + '/></g>';
   }
-  const svg = (w, h, body, label) => '<svg class="fig" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(label || 'figure') + '">' + body + '</svg>';
+  const svg = (w, h, body, label) => '<svg class="fig" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(label || tr('figure')) + '">' + body + '</svg>';
   const T = (x, y, s, size, extra) => '<text x="' + x + '" y="' + y + '" font-size="' + size + '" fill="currentColor" text-anchor="middle" ' + (extra || '') + '>' + esc(s) + '</text>';
 
   const FIG = {
@@ -30,13 +32,13 @@
         if (worn) o += '<ellipse cx="' + (x + 29) + '" cy="' + (y + 30) + '" rx="20" ry="15" fill="#6e6655" opacity=".55"/>';
         o += T(x + 29, y + 38, k, 26, 'font-family="Stencil" font-weight="900" fill="' + (worn ? '#4a4436' : '#2b2b28') + '" style="fill:' + (worn ? '#4a4436' : '#2b2b28') + '"');
       });
-      return svg(240, 300, o, 'Clavier à codes : touches usées ' + b.worn.join(', '));
+      return svg(240, 300, o, tr('Clavier à codes : touches usées {0}', b.worn.join(', ')));
     },
     grid(b) {
       const cs = 44, gx = 30, gy = b.loco ? 54 : 28; // marge haute pour les étiquettes
       const W = gx + b.cols * cs + (b.north ? 34 : 12), H = gy + b.rows * cs + 12;
       let o = '';
-      if (b.loco) o += '<path d="M' + (gx + b.cols * cs / 2 - 60) + ' 26h120l-10 -14M' + (gx + b.cols * cs / 2 + 60) + ' 26l-10 14" fill="none" stroke="currentColor" stroke-width="2"/>' + T(gx + b.cols * cs / 2, 18, 'LOCOMOTIVE', 13, 'letter-spacing="2" font-family="Typewriter"');
+      if (b.loco) o += '<path d="M' + (gx + b.cols * cs / 2 - 60) + ' 26h120l-10 -14M' + (gx + b.cols * cs / 2 + 60) + ' 26l-10 14" fill="none" stroke="currentColor" stroke-width="2"/>' + T(gx + b.cols * cs / 2, 18, tr('LOCOMOTIVE'), 13, 'letter-spacing="2" font-family="Typewriter"');
       if (b.north) o += '<g transform="translate(' + (W - 14) + ' 40)"><path d="M0 -10l5 12h-10z" fill="currentColor"/>' + T(0, 14, 'N', 11, 'font-family="Typewriter" font-weight="700"') + '</g>';
       for (let c = 0; c <= b.cols; c++) o += '<line x1="' + (gx + c * cs) + '" y1="' + gy + '" x2="' + (gx + c * cs) + '" y2="' + (gy + b.rows * cs) + '" stroke="currentColor" stroke-opacity="' + (c % b.cols === 0 ? .9 : .45) + '" stroke-width="' + (c % b.cols === 0 ? 2 : 1) + '"/>';
       for (let r = 0; r <= b.rows; r++) o += '<line x1="' + gx + '" y1="' + (gy + r * cs) + '" x2="' + (gx + b.cols * cs) + '" y2="' + (gy + r * cs) + '" stroke="currentColor" stroke-opacity="' + (r % b.rows === 0 ? .9 : .45) + '" stroke-width="' + (r % b.rows === 0 ? 2 : 1) + '"/>';
@@ -52,7 +54,7 @@
         else if (m.k === 'cross') o += '<path d="M' + (x - 12) + ' ' + (y - 12) + 'l24 24M' + (x + 12) + ' ' + (y - 12) + 'l-24 24" stroke="#26211a" stroke-width="3.5" stroke-linecap="round"/>';
         else if (m.k === 'scratch') o += '<path d="M' + (x - 16) + ' ' + (y - 8) + 'l30 6M' + (x - 14) + ' ' + (y + 1) + 'l28 7M' + (x - 10) + ' ' + (y + 9) + 'l22 4" stroke="currentColor" stroke-width="1.6" stroke-opacity=".8"/>';
       });
-      return svg(W, H, o, 'Plan quadrillé');
+      return svg(W, H, o, tr('Plan quadrillé'));
     },
     dials(b) {
       const n = b.dials.length, w = 92;
@@ -75,7 +77,7 @@
         if (d.color) o += '<circle cx="' + cx + '" cy="' + (cy + 52) + '" r="6" fill="' + LAMP[d.color] + '"/>';
         o += T(cx, cy + 74, d.label, 12, 'font-family="Typewriter" font-weight="700" letter-spacing="1"');
       });
-      return svg(n * w, 140, o, 'Cadrans');
+      return svg(n * w, 140, o, tr('Cadrans'));
     },
     glyphs(b) {
       const per = Math.min(b.seq.length, 5), rows = Math.ceil(b.seq.length / per), s = 56;
@@ -87,7 +89,7 @@
         else o += '<path d="M' + (x + 12) + ' ' + (y + 30) + 'q4-18 18-16q14-6 16 10q8 12-6 18q-14 8-22-2q-10-2-6-10z" fill="#2a2418" opacity=".85"/>';
         o += T(x + s / 2, y + s + 16, String(i + 1), 12, 'font-family="Typewriter" fill-opacity=".6"');
       });
-      return svg(12 + per * (s + 8), 6 + rows * (s + 22), o, 'Message en symboles');
+      return svg(12 + per * (s + 8), 6 + rows * (s + 22), o, tr('Message en symboles'));
     },
     key(b) {
       let o = '';
@@ -99,7 +101,7 @@
         o += '<text x="' + (x + 58) + '" y="' + (y + 34) + '" font-size="14" fill="currentColor" font-family="Typewriter">=</text>';
         o += T(x + 92, y + 37, l, 30, 'font-family="Stencil" font-weight="900"');
       });
-      return svg(cols * cw, Math.ceil(b.pairs.length / cols) * rh + 4, o, 'Table de correspondance symboles / lettres');
+      return svg(cols * cw, Math.ceil(b.pairs.length / cols) * rh + 4, o, tr('Table de correspondance symboles / lettres'));
     },
     lamps(b) {
       let o = '';
@@ -110,17 +112,17 @@
         if (l.on) o += '<circle cx="' + x + '" cy="' + y + '" r="12" fill="' + LAMP[l.c] + '"/><circle cx="' + x + '" cy="' + y + '" r="16" fill="' + LAMP[l.c] + '" opacity=".25"/><circle cx="' + (x - 4) + '" cy="' + (y - 4) + '" r="3" fill="#fff" opacity=".7"/>';
         else o += '<circle cx="' + x + '" cy="' + y + '" r="12" fill="' + LAMP[l.c] + '" opacity=".14"/>';
         if (l.ring) o += '<circle cx="' + x + '" cy="' + y + '" r="23" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 3"/>';
-        o += T(x, y + 36, LAMP_L[l.c] + (l.on ? '' : ' ·'), 11, 'font-family="Typewriter" font-weight="700" fill-opacity="' + (l.on ? .9 : .45) + '"');
+        o += T(x, y + 36, lampL(l.c) + (l.on ? '' : ' ·'), 11, 'font-family="Typewriter" font-weight="700" fill-opacity="' + (l.on ? .9 : .45) + '"');
       }));
-      return svg(5 * cw + 8, b.rows.length * rh + 6, o, 'Pupitre de voyants (lettres : R rouge, V vert, B bleu, A ambre ; point : éteint)');
+      return svg(5 * cw + 8, b.rows.length * rh + 6, o, tr('Pupitre de voyants (lettres : R rouge, V vert, B bleu, A ambre ; point : éteint)'));
     },
     ticketstub(b) {
       return '<div class="stub" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:6px 0 12px;font-family:var(--f-stencil);font-weight:900;text-align:center">' +
-        '<div><div style="font:13px var(--f-type)">DÉPART</div><div style="font-size:40px;letter-spacing:.06em">' + esc(b.from) + '</div></div>' +
+        '<div><div style="font:13px var(--f-type)">' + tr('DÉPART') + '</div><div style="font-size:40px;letter-spacing:.06em">' + esc(b.from) + '</div></div>' +
         '<div style="font-size:26px">→</div>' +
-        '<div><div style="font:13px var(--f-type)">ARRIVÉE</div><div style="font-size:40px;letter-spacing:.06em">' + esc(b.to) + '</div></div>' +
+        '<div><div style="font:13px var(--f-type)">' + tr('ARRIVÉE') + '</div><div style="font-size:40px;letter-spacing:.06em">' + esc(b.to) + '</div></div>' +
         '<div style="grid-column:1/-1;display:flex;justify-content:space-around;border-top:1px dashed #a2874d;padding-top:8px;font:700 15px var(--f-type)">' +
-        '<span>Classe ' + esc(b.cls) + '</span><span>Voiture ' + esc(b.car) + '</span><span>Place ' + esc(b.seat) + '</span></div></div>';
+        '<span>' + tr('Classe {0}', esc(b.cls)) + '</span><span>' + tr('Voiture {0}', esc(b.car)) + '</span><span>' + tr('Place {0}', esc(b.seat)) + '</span></div></div>';
     },
     carriage(b) {
       let o = '<path d="M14 40l-10 10l10 10" fill="none" stroke="currentColor" stroke-width="2"/>' + T(46, 30, 'LOCO', 11, 'font-family="Typewriter"');
@@ -129,8 +131,8 @@
         const x = 28 + i * 56;
         o += '<rect x="' + x + '" y="20" width="52" height="44" fill="none" stroke="currentColor" stroke-opacity=".7"/>' + T(x + 26, 50, String(i + 1), 22, 'font-family="Stencil" font-weight="900"');
       }
-      o += '<line x1="28" y1="76" x2="' + (28 + b.n * 56) + '" y2="76" stroke="currentColor" stroke-dasharray="4 4"/>' + T(28 + b.n * 28, 100, 'couloir', 12, 'font-family="Typewriter"');
-      return svg(b.n * 56 + 40, 106, o, 'Plan de la voiture : compartiments 1 à ' + b.n + ' depuis la locomotive');
+      o += '<line x1="28" y1="76" x2="' + (28 + b.n * 56) + '" y2="76" stroke="currentColor" stroke-dasharray="4 4"/>' + T(28 + b.n * 28, 100, tr('couloir'), 12, 'font-family="Typewriter"');
+      return svg(b.n * 56 + 40, 106, o, tr('Plan de la voiture : compartiments 1 à {0} depuis la locomotive', b.n));
     },
     train(b) {
       const cw = 30;
@@ -145,7 +147,7 @@
       const W = x0 + 8 + b.cars * (cw + 6) + (loco ? 0 : 16);
       if (!loco) o += '<circle cx="' + (W - 14) + '" cy="50" r="4" fill="#ff4b3a" stroke="none"/>';
       o += '<line x1="0" y1="84" x2="' + W + '" y2="84" stroke-opacity=".5"/></g>';
-      return svg(W, 92, o, loco ? 'Photo : locomotive et ' + b.cars + ' voitures' : 'Photo : ' + b.cars + ' voitures et le feu de queue');
+      return svg(W, 92, o, loco ? tr('Photo : locomotive et {0} voitures', b.cars) : tr('Photo : {0} voitures et le feu de queue', b.cars));
     },
     strip(b) {
       return '<div class="strip">' + b.text.split('').map((c) => '<span>' + esc(c) + '</span>').join('') + '</div>';
@@ -165,8 +167,8 @@
       o += '<line x1="100" y1="100" x2="' + (100 + Math.cos(ha) * 40) + '" y2="' + (100 + Math.sin(ha) * 40) + '" stroke="#1d1d1a" stroke-width="6" stroke-linecap="round"/>';
       o += '<line x1="100" y1="100" x2="' + (100 + Math.cos(ma) * 62) + '" y2="' + (100 + Math.sin(ma) * 62) + '" stroke="#1d1d1a" stroke-width="3.5" stroke-linecap="round"/><circle cx="100" cy="100" r="5" fill="#1d1d1a"/>';
       o += '<path d="M60 40l30 46l-6 22l28 30M90 86l34-20M84 108l-40 18" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.3"/>';
-      o += '<text x="100" y="140" font-size="10" text-anchor="middle" fill="#6b5a32" font-family="Typewriter">SOIR</text>';
-      return svg(200, 200, o, 'Montre arrêtée');
+      o += '<text x="100" y="140" font-size="10" text-anchor="middle" fill="#6b5a32" font-family="Typewriter">' + tr('SOIR') + '</text>';
+      return svg(200, 200, o, tr('Montre arrêtée'));
     },
     seats(b) {
       let o = '<circle cx="130" cy="130" r="74" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="130" cy="130" r="66" fill="none" stroke="currentColor" stroke-opacity=".3"/>';
@@ -177,8 +179,8 @@
       });
       const da = (b.door - 90) * Math.PI / 180, dx = 130 + Math.cos(da) * 124, dy = 130 + Math.sin(da) * 124;
       o += '<g transform="translate(' + dx + ' ' + dy + ') rotate(' + b.door + ')"><rect x="-24" y="-6" width="48" height="12" fill="#b8322a"/><path d="M-24 6a48 48 0 0 1 48 0" fill="none" stroke="#b8322a" stroke-dasharray="3 3"/></g>';
-      o += '<text x="' + (130 + Math.cos(da) * 104) + '" y="' + (130 + Math.sin(da) * 104 + 5) + '" font-size="13" text-anchor="middle" fill="#b8322a" font-family="Typewriter" font-weight="700">porte</text>';
-      return svg(260, 260, o, 'Plan de la table de séance');
+      o += '<text x="' + (130 + Math.cos(da) * 104) + '" y="' + (130 + Math.sin(da) * 104 + 5) + '" font-size="13" text-anchor="middle" fill="#b8322a" font-family="Typewriter" font-weight="700">' + tr('porte') + '</text>';
+      return svg(260, 260, o, tr('Plan de la table de séance'));
     },
     tarot(b) {
       return '<div class="tarot-card"><div class="num">' + esc(b.numeral) + '</div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + (GLYPHS[b.g] || '') + '" fill="none" stroke="#ecd9a4" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="name">' + esc(b.name) + '</div></div>';
@@ -197,7 +199,7 @@
         o += '<text x="' + (x + w / 2) + '" y="' + (176 - h / 2 + 6) + '" font-size="14" text-anchor="middle" fill="#2b2418" font-family="Typewriter" font-weight="700" transform="rotate(-90 ' + (x + w / 2) + ' ' + (176 - h / 2) + ')">' + bk.num + '</text>';
         x += w + 3;
       });
-      return svg(W, 192, o, 'Étagère : ' + b.books.map((bk) => bk.color + ' ' + bk.num).join(', '));
+      return svg(W, 192, o, tr('Étagère : {0}', b.books.map((bk) => tr(bk.color) + ' ' + bk.num).join(', ')));
     },
     candles(b) {
       const from = b.from || 0, W = 20 + b.lit.length * 43;
@@ -210,7 +212,7 @@
         else o += '<path d="M' + x + ' 60q-6-10 2-20q-6 8 1 16" fill="none" stroke="#999" stroke-opacity=".6"/>';
         o += T(x, 180, String(i + 1), 15, 'font-family="Stencil" font-weight="900"');
       });
-      return svg(Math.max(W, 180), 190, o, 'Chandelier, bougies ' + (from + 1) + ' à ' + (from + b.lit.length) + ' ; allumées : ' + (b.lit.map((l, j) => (l ? from + j + 1 : '')).filter(Boolean).join(', ') || 'aucune'));
+      return svg(Math.max(W, 180), 190, o, tr('Chandelier, bougies {0} à {1} ; allumées : {2}', from + 1, from + b.lit.length, b.lit.map((l, j) => (l ? from + j + 1 : '')).filter(Boolean).join(', ') || tr('aucune')));
     },
     letters(b) {
       const cs = 44;
@@ -223,7 +225,7 @@
       const tear = (y) => '<path d="M0 ' + y + ' l20 5l18 -4l22 6l25 -5l20 4l30 -6l25 5l30 -3" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-dasharray="2 3"/>';
       if (b.startRow > 0) o += tear(3);
       if (b.startRow + b.rows.length < (b.total || 5)) o += tear(8 + b.rows.length * cs);
-      return svg(30 + 5 * cs + 10, 12 + b.rows.length * cs + 8, o, 'Lettres du grimoire, lignes ' + (b.startRow + 1) + ' à ' + (b.startRow + b.rows.length));
+      return svg(30 + 5 * cs + 10, 12 + b.rows.length * cs + 8, o, tr('Lettres du grimoire, lignes {0} à {1}', b.startRow + 1, b.startRow + b.rows.length));
     },
     mask(b) {
       const cs = 44;
@@ -234,7 +236,7 @@
       b.cells.forEach((row, r) => row.forEach((h, c) => {
         if (h) o += '<rect x="' + (30 + c * cs + 8) + '" y="' + (6 + r * cs + 8) + '" width="' + (cs - 16) + '" height="' + (cs - 16) + '" rx="2" fill="#0b1f33" stroke="#4c3812" stroke-width="2"/>';
       }));
-      return svg(30 + 5 * cs + 10, nr * cs + 14, o, 'Grille de laiton, rangées ' + (st + 1) + ' à ' + (st + nr) + ', ' + b.cells.flat().filter(Boolean).length + ' trous');
+      return svg(30 + 5 * cs + 10, nr * cs + 14, o, tr('Grille de laiton, rangées {0} à {1}, {2} trous', st + 1, st + nr, b.cells.flat().filter(Boolean).length));
     },
     inkletter(b) { return '<div class="inkletter"><span>' + esc(b.letter) + '</span></div>'; }
   };

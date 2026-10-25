@@ -12,4 +12,8 @@
 - Les boutons `.btn` avec icône n'avaient pas de taille d'icône (icône géante) : règle `.btn svg` ajoutée le 24/10.
 - **JSON-LD en fin de `<body>`** (25/10) : `tests/defi.test.js` exige que `defi.js` soit le **premier** `<script>` de `index.html` ; un bloc `application/ld+json` dans le `<head>` fait échouer le test.
 
+- **Anglais (25/10)** : tout nouveau texte d'interface s'écrit `T('texte français')` (ou `TN` pour un pluriel) et son anglais va dans `i18n/strings.json` — sinon `tests/i18n.test.js` échoue. Ne jamais écrire de gabarit `'… ' + x + ' …'` : `T('… {0} …', x)`. Recopier `i18n/strings.json` dans l'appli Android (`assets/i18n/`).
+- **Scénarios anglais** : ne jamais les éditer à la main ; corriger le dictionnaire `JEUXragments	oolsi18nen-<scénario>.json` puis `node tools/make-en.js` (et recopier dans `android/app/src/main/assets/scenarios-en/`). Une modification de `data/` (interdite ici) casserait le test de structure tant que le dictionnaire n'est pas complété.
+- **Réponses en français dans les deux langues** : un groupe FR/EN tape sur la même serrure. Ne pas « traduire » une réponse ni un mot de passage, ni l'initiale d'un titre de livre du manoir.
+- **Changer de langue recharge la page** (les scénarios sont relus dans l'autre dossier) ; la partie en cours est gardée (mêmes id, même structure).
 - **Fichier `google9ad7f8bd44912903.html` (25/10)** : validation Google Search Console (propriété + sitemap envoyé). Ne jamais le supprimer ni le renommer, sinon la propriété perd sa validation.

@@ -1,8 +1,9 @@
 /* FRAGMENTS — service worker : cache d'abord, tout hors ligne (y compris les scénarios). */
-const CACHE = 'fragments-v2.6';
+const CACHE = 'fragments-v2.7';
 const ASSETS = [
-  './', 'index.html', 'privacy.html', 'manifest.webmanifest', 'css/app.css',
-  'js/defi.js', 'js/engine.js', 'js/qr.js', 'js/docs.js', 'js/audio.js', 'js/app.js',
+  './', 'index.html', 'privacy.html', 'manifest.webmanifest', 'css/app.css', 'css/extras.css',
+  'js/defi.js', 'js/engine.js', 'js/qr.js', 'js/docs.js', 'js/audio.js', 'js/i18n.js', 'js/autres-jeux.js', 'js/howto.js', 'js/share-image.js', 'js/app.js',
+  'i18n/strings.json', 'i18n/scenarios/en/index.json', 'i18n/scenarios/en/bunker.json', 'i18n/scenarios/en/train.json', 'i18n/scenarios/en/manoir.json',
   'data/index.json', 'data/bunker.json', 'data/train.json', 'data/manoir.json',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png',
   'fonts/big-shoulders-stencil-display-latin-700-normal.woff2', 'fonts/big-shoulders-stencil-display-latin-900-normal.woff2',

@@ -165,11 +165,15 @@
     return { stages: stages, words: wi.map(function (i) { return scenario.words[i]; }) };
   }
 
-  function shareText(title, starCount, elapsedSec, hints, timedOut) {
+  // tr : traduction facultative (js/i18n.js), clé = texte français ; sans tr, texte français (vecteurs de parité).
+  const same = (s) => s;
+  const count = (tr, n, zero, one, many) => (n === 0 ? tr(zero) : n === 1 ? tr(one) : tr(many).split('{0}').join(n));
+  function shareText(title, starCount, elapsedSec, hints, timedOut, tr) {
+    tr = tr || same;
     const st = starCount > 0 ? new Array(starCount + 1).join('⭐') : '☆';
-    const tail = hints === 0 ? 'sans indice' : hints === 1 ? '1 indice' : hints + ' indices';
-    if (timedOut) return 'FRAGMENTS — ' + title + ' ☆ hors temps, ' + tail;
-    return 'FRAGMENTS — ' + title + ' ' + st + ' en ' + fmtTime(elapsedSec) + ', ' + tail;
+    const tail = count(tr, hints, 'sans indice', '1 indice', '{0} indices');
+    if (timedOut) return 'FRAGMENTS — ' + title + ' ☆ ' + tr('hors temps') + ', ' + tail;
+    return 'FRAGMENTS — ' + title + ' ' + st + ' ' + tr('en {0}').split('{0}').join(fmtTime(elapsedSec)) + ', ' + tail;
   }
 
   // ---- Dossier du jour (même logique que engine/Daily.kt de l'appli Android 2.0) ----
@@ -186,15 +190,15 @@
 
   /** Arguments de Defi.shareText pour une partie du jour terminée ; null si abandon (ne compte pas).
    * d : { n, title, stars, used, hints: [par énigme], solved, wrong, players, timedOut, serie, abandon } */
-  function shareDaily(d) {
+  function shareDaily(d, tr) {
+    tr = tr || same;
     if (d.abandon) return null;
     const cells = d.hints.map(function (h, i) { return i < d.solved ? DAILY_CELLS[Math.min(h, 3)] : '⬛'; }).join('');
     const nh = d.hints.reduce(function (a, b) { return a + b; }, 0);
-    const detail = (d.timedOut ? 'hors temps' : fmtTime(d.used)) + ' · ' +
-      (nh === 0 ? 'sans indice' : nh === 1 ? '1 indice' : nh + ' indices') + ' · ' +
-      (d.wrong === 0 ? 'sans erreur' : d.wrong === 1 ? '1 erreur' : d.wrong + ' erreurs') + ' · ' + d.players + ' joueurs';
+    const detail = (d.timedOut ? tr('hors temps') : fmtTime(d.used)) + ' · ' + count(tr, nh, 'sans indice', '1 indice', '{0} indices') + ' · ' +
+      count(tr, d.wrong, 'sans erreur', '1 erreur', '{0} erreurs') + ' · ' + tr('{0} joueurs').split('{0}').join(d.players);
     return { nom: 'FRAGMENTS', n: d.n, emoji: '🗂️', score: d.title + ' ' + (d.stars > 0 ? new Array(d.stars + 1).join('⭐') : '☆'),
-      lignes: [cells], detail: detail, serie: d.serie, url: DAILY_URL };
+      lignes: [cells], detail: detail, serie: d.serie, libelleSerie: tr('{0} jours de suite'), url: DAILY_URL };
   }
 
   return {
