@@ -13,6 +13,8 @@
 | `css/app.css` | thème « dossier sous la lampe » (510 lignes, écart préexistant) |
 | `data/*.json` | scénarios (**ne jamais modifier**) |
 | `sw.js` | cache d'abord, hors ligne complet |
+| `privacy.html` | confidentialité + conditions d'utilisation + mentions légales (lien dans les Réglages) |
+| `404.html`, `robots.txt`, `sitemap.xml`, `og-image.png` | page introuvable (chemins absolus), référencement, aperçu des liens 1200×630 |
 
 ## 2. Sources de vérité
 - Scénarios : `data/index.json` + un fichier par scénario.
@@ -30,7 +32,7 @@ Aucun secret, aucun réseau, aucune donnée personnelle. Le texte partagé ne co
 ## 5. Identité
 - Domaine : organisation GitHub `fragments-jeu` → `https://fragments-jeu.github.io/`.
 - `id` du manifest : `/fragments/` (ne jamais changer).
-- Cache : `fragments-v2.3` ; le SW ne supprime que les caches `fragments-*`.
+- Cache : `fragments-v2.4` ; le SW ne supprime que les caches `fragments-*`.
 
 ## 6. Dépendances externes
 Aucune. `navigator.share` / presse-papiers facultatifs (repli : zone de texte à copier).

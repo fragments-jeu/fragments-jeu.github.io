@@ -651,7 +651,8 @@
     '<div class="toggle"><span>Son<small>Ambiance et signaux générés en direct</small></span><button class="switch" role="switch" data-set="sound" aria-checked="' + settings.sound + '" aria-label="Son"></button></div>' +
     '<div class="toggle"><span>Vibrations<small>Retour au toucher et aux réponses</small></span><button class="switch" role="switch" data-set="vibrate" aria-checked="' + settings.vibrate + '" aria-label="Vibrations"></button></div>' +
     '<div class="toggle"><span>Partie en cours<small>' + (game && !game.ended ? 'Une partie est sauvegardée sur ce téléphone' : 'Aucune') + '</small></span><button class="btn danger" data-act="wipe" style="min-height:44px;font-size:17px" ' + (game ? '' : 'disabled') + '>Effacer</button></div>' +
-    '<p class="prompt" style="margin-top:20px">Fragments fonctionne sans connexion. Les parties restent sur ce téléphone.</p></main>';
+    '<p class="prompt" style="margin-top:20px">Fragments fonctionne sans connexion. Les parties restent sur ce téléphone.</p>' +
+    '<p class="prompt"><a class="legal" href="privacy.html">Confidentialité, conditions et mentions légales</a></p></main>';
 
   // =============== ACTIONS ===============
   const ACTIONS = {
