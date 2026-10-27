@@ -45,6 +45,9 @@ Objectif : plus aucun fichier au-delà de ~400 lignes, une responsabilité par f
 | `privacy.html` | confidentialité + conditions d'utilisation + mentions légales (lien dans les Réglages) |
 | `404.html`, `robots.txt`, `sitemap.xml`, `og-image.png` | page introuvable (chemins absolus), référencement, aperçu des liens 1200×630 |
 
+Accessibilité : chaque écran est rendu dans un `<main class="screen">` (modèle repris le 28/10 par LUMEN, ÉCHO et Résonance) ; pas de pied de page, lien `privacy.html` dans les Réglages.
+Documents de cadrage dans `docs/` : `PRD.md`, `TRD.md`, `APP_FLOW.md`, `DESIGN_BRIEF.md`, `BACKEND_SCHEMA.md`, `IMPLEMENTATION_PLAN.md`.
+
 ## 2. Sources de vérité
 - Scénarios : `data/index.json` + un fichier par scénario.
 - Logique du défi du jour : `js/defi.js` (une seule version pour les 4 jeux, empreinte FNV vérifiée par `tests/defi.test.js`).
@@ -65,7 +68,7 @@ Aucun secret, aucun réseau, aucune donnée personnelle. Le texte partagé ne co
 ## 5. Identité
 - Domaine : organisation GitHub `fragments-jeu` → `https://fragments-jeu.github.io/`.
 - `id` du manifest : `/fragments/` (ne jamais changer).
-- Cache : `fragments-v2.10` ; le SW ne supprime que les caches `fragments-*`.
+- Cache : `fragments-v2.11` ; le SW ne supprime que les caches `fragments-*`.
 
 ## 6. Dépendances externes
 Aucune. `navigator.share` / presse-papiers facultatifs (repli : zone de texte à copier ; pour l'image : téléchargement du PNG si le partage de fichiers est refusé).

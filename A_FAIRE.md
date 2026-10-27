@@ -18,6 +18,7 @@
 
 - 25/10 : relecture de l'anglais avec DeepL : 1 207 textes comparés (3 scénarios + interface), 23 corrigés dans les dictionnaires `JEUX\fragments\tools\i18n\en-*.json` (1 grave : deux textes du manoir inversés, plan de la table / journal de la médium ; 2 moyennes : « Read forwards » trompeur dans les indices RUBIS, faux-ami « slide rule » ; 15 mineures). Journal détaillé : `JEUX\fragments\tools\i18n\RELECTURE-DEEPL.md`. Interface : rien à corriger. `i18n/scenarios/en/` régénéré, cache `fragments-v2.10`, tests 35 verts. Appli 2.1 refaite avec les mêmes textes.
 - **26/10** : politique conforme LCEN/RGPD : mentions légales complètes (éditeur et directeur de la publication Aulit42369, personne physique non professionnelle anonyme, identité communiquée à l'hébergeur ; GitHub, Inc. avec adresse, téléphone, page de contact), transferts hors UE (DPF / clauses types) dans « Hébergement », contact et réclamation CNIL dans « Vos droits » (FR + EN, le français fait foi). Cache `fragments-v2.11`.
+- **28/10** : docs de cadrage créées dans `docs/` (PRD, TRD, APP_FLOW, DESIGN_BRIEF, BACKEND_SCHEMA, IMPLEMENTATION_PLAN), d'après le code. Aucun fichier du jeu modifié (cache inchangé `fragments-v2.11`).
 
 ## En cours
 
