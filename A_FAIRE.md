@@ -19,17 +19,18 @@
 - 25/10 : relecture de l'anglais avec DeepL : 1 207 textes comparés (3 scénarios + interface), 23 corrigés dans les dictionnaires `JEUX\fragments\tools\i18n\en-*.json` (1 grave : deux textes du manoir inversés, plan de la table / journal de la médium ; 2 moyennes : « Read forwards » trompeur dans les indices RUBIS, faux-ami « slide rule » ; 15 mineures). Journal détaillé : `JEUX\fragments\tools\i18n\RELECTURE-DEEPL.md`. Interface : rien à corriger. `i18n/scenarios/en/` régénéré, cache `fragments-v2.10`, tests 35 verts. Appli 2.1 refaite avec les mêmes textes.
 - **26/10** : politique conforme LCEN/RGPD : mentions légales complètes (éditeur et directeur de la publication Aulit42369, personne physique non professionnelle anonyme, identité communiquée à l'hébergeur ; GitHub, Inc. avec adresse, téléphone, page de contact), transferts hors UE (DPF / clauses types) dans « Hébergement », contact et réclamation CNIL dans « Vos droits » (FR + EN, le français fait foi). Cache `fragments-v2.11`.
 - **28/10** : docs de cadrage créées dans `docs/` (PRD, TRD, APP_FLOW, DESIGN_BRIEF, BACKEND_SCHEMA, IMPLEMENTATION_PLAN), d'après le code. Aucun fichier du jeu modifié (cache inchangé `fragments-v2.11`).
+- **28/10** : mesure d'audience **GoatCounter sans cookie** (même compte et même méthode que le Site) : chemins `/fragments/…`, comptée seulement sur `*.github.io` (jamais dans l'appli Android, une WebView, en local), opposition `skipgc` + bouton « Ne pas être compté » dans `privacy.html` (toutes les langues, texte repris du Site, liste des traceurs et date mises à jour), CSP élargie (empreinte du script, `gc.zgo.at`, `aulit42369.goatcounter.com`), cache `fragments-v2.12`, `tests/statistiques.test.js`. Vérifié dans Chrome sans tête (URL github.io simulée : un envoi `/fragments/` ; local et `skipgc` : aucun ; 0 erreur console/CSP).
 
 ## En cours
 
 ## À faire
-- Play Console (à la publication) : fiche « Sécurité des données » cohérente avec `privacy.html` (aucune donnée collectée).
+- Play Console (à la publication) : fiche « Sécurité des données » cohérente avec `privacy.html` (appli : aucune donnée collectée ; GoatCounter ne tourne que sur la version web, rien à déclarer pour l'appli).
 - Lots 4-7 : vérifier sur téléphone (Chrome Android) le partage de l'image (WhatsApp, Instagram story) et le passage FR ⇄ EN dans les Réglages ; jouer une partie en anglais (textes relus avec DeepL le 25/10, mais pas encore en partie réelle avec les figures).
 - Liens des autres jeux : remplacer par les liens Play Store quand les applis seront publiées (`js/autres-jeux.js`).
 - Android 2.0 : tester l'APK sur téléphone puis envoyer `Fragments-2.0.aab` sur la Play Console (voir `JEUX\fragments\android\A_FAIRE.md`).
 - Les tests de `JEUX\fragments\tests` pointent vers l'ancienne copie `pwa\` (12/10) : les rebrancher sur ce dépôt.
 
-- Mesure d'audience : rien d'installé (à décider ; option sans cookie si oui).
+- Mesure d'audience : vérifier dans le tableau de bord `aulit42369.goatcounter.com` que les visites arrivent sous `/fragments/` (quelques minutes après une visite).
 
 ## Décisions prises
 - 25/10 (lot 7) : en anglais, **réponses et mots de passage restent en français** (FILTRE, OMBRE, FOURGON, BOUSSOLE…) : ils sont tapés sur la serrure commune et doivent être identiques pour un groupe mixte FR/EN. Les indices anglais les glosent (« FOURGON (French for the luggage van) »). Les titres des livres du manoir gardent leur initiale (réponse = initiales). Le voyant vert du pupitre est noté G en anglais (V en français), heures « 23h40 » écrites « 23:40 » (mêmes chiffres).

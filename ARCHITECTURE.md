@@ -68,7 +68,7 @@ Aucun secret, aucun réseau, aucune donnée personnelle. Le texte partagé ne co
 ## 5. Identité
 - Domaine : organisation GitHub `fragments-jeu` → `https://fragments-jeu.github.io/`.
 - `id` du manifest : `/fragments/` (ne jamais changer).
-- Cache : `fragments-v2.11` ; le SW ne supprime que les caches `fragments-*`.
+- Cache : `fragments-v2.12` ; le SW ne supprime que les caches `fragments-*`.
 
 ## 6. Dépendances externes
 Aucune. `navigator.share` / presse-papiers facultatifs (repli : zone de texte à copier ; pour l'image : téléchargement du PNG si le partage de fichiers est refusé).
@@ -85,3 +85,6 @@ Vérification navigateur : Chrome sans tête piloté par CDP (accueil, création
 
 ## 8. Risques connus
 Voir `PIEGES.md`.
+
+## Statistiques de visite (28/10/2026)
+GoatCounter sans cookie, chemins `/fragments/…`, chargé par le script d'une ligne en fin de `index.html` uniquement sur `*.github.io` et sans `skipgc` (détail : `docs/TRD.md`, section Traceurs). `privacy.html` le déclare dans toutes ses langues, avec le bouton « Ne pas être compté ». Test : `tests/statistiques.test.js` (identique dans les 4 jeux, seul `PREFIXE` change).

@@ -10,7 +10,7 @@
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="preload" href="fonts/big-shoulders-stencil-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* « Dossier sous la lampe » : bureau olive, feuille dactylographiée, tampon rouge. Sans script. */
+  /* « Dossier sous la lampe » : bureau olive, feuille dactylographiée, tampon rouge. Un seul script : le bouton des statistiques. */
   @font-face { font-family: 'Stencil'; src: url('fonts/big-shoulders-stencil-display-latin-900-normal.woff2') format('woff2'); font-weight: 900; font-display: swap; }
   @font-face { font-family: 'Typewriter'; src: url('fonts/courier-prime-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: swap; }
   @font-face { font-family: 'Typewriter'; src: url('fonts/courier-prime-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: swap; }
@@ -35,6 +35,7 @@
   .feuille a { color: #1e4a73; }
   .tampon { position: absolute; right: 14px; top: 14px; transform: rotate(-8deg); border: 3px double var(--red); color: var(--red);
     font: 900 16px/1.1 'Stencil', 'Impact', sans-serif; letter-spacing: .06em; padding: 2px 8px; }
+.gc { font: inherit; font-size: .92em; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 999px; padding: 5px 14px; cursor: pointer; }
   :focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; }
   @media (max-width: 420px) { .tampon { position: static; display: inline-block; margin: 0 0 10px; } }
 </style>
@@ -49,11 +50,11 @@
   </nav>
 
   <section class="feuille" id="confidentialite">
-    <span class="tampon" aria-hidden="true">AUCUNE DONNÉE</span>
+    <span class="tampon" aria-hidden="true">SANS COOKIE</span>
     <h2>Politique de confidentialité</h2>
-    <p class="date">Dernière mise à jour : 26 octobre 2026</p>
+    <p class="date">Dernière mise à jour : 28 octobre 2026</p>
     <h3>Aucune donnée collectée</h3>
-    <p>Fragments ne collecte, ne transmet et ne vend aucune donnée personnelle. Pas de publicité, pas de mesure d'audience, pas de compte, pas de nom de joueur. Le jeu ne contacte aucun serveur : il charge seulement ses propres fichiers (scénarios compris), puis fonctionne hors ligne. Les téléphones des joueurs ne communiquent pas entre eux : c'est le code ou le QR, lu par vous, qui relie la partie.</p>
+    <p>Fragments ne collecte, ne transmet et ne vend aucune donnée personnelle. Pas de publicité, pas de compte, pas de nom de joueur. L'appli ne contacte aucun serveur ; la version web charge ses propres fichiers (scénarios compris), compte les visites de façon anonyme (voir « Statistiques de visite »), puis fonctionne hors ligne. Les téléphones des joueurs ne communiquent pas entre eux : c'est le code ou le QR, lu par vous, qui relie la partie.</p>
     <h3>Données gardées sur votre appareil</h3>
     <p>La partie en cours (scénario, code, chrono, pièces trouvées), vos réglages (langue, son, vibrations) et la série du Dossier du jour sont enregistrés uniquement dans le stockage local de votre navigateur ou de l'appli. « Effacer » dans les Réglages supprime la partie ; désinstaller le jeu ou vider ses données efface tout.</p>
     <h3>Caméra</h3>
@@ -64,8 +65,11 @@
     <p>Après votre troisième Dossier du jour réussi, l'appli peut afficher une seule fois la fenêtre d'avis de Google Play. Elle est gérée par Google Play ; l'éditeur ne reçoit aucune donnée personnelle, seulement l'avis public si vous choisissez d'en laisser un.</p>
     <h3>Liens vers les autres jeux</h3>
     <p>La carte « Les autres jeux d'Aulit » ouvre simplement leurs pages web dans votre navigateur.</p>
+    <h3>Statistiques de visite (version web seulement)</h3>
+    <p>La version web du jeu utilise <a href="https://www.goatcounter.com/help/privacy" rel="noopener">GoatCounter</a>, service de mesure d'audience exploité depuis l'Irlande et hébergé dans l'Union européenne (serveurs en Finlande et en Allemagne). Il compte les pages vues sans cookie et sans identifiant qui vous suivrait d'une visite à l'autre. Votre adresse IP sert seulement à déduire le pays et à ne pas compter deux fois la même visite : elle n'est jamais enregistrée (gardée quelques heures au plus en mémoire, puis oubliée). Seules des statistiques globales sont conservées : pages vues, site d'origine, navigateur, pays et taille d'écran approximatifs. Cette mesure sert uniquement à connaître la fréquentation du jeu : elle est exemptée de consentement, selon les recommandations de la CNIL. Base légale : l'intérêt légitime à connaître la fréquentation du jeu. L'appli Android ne mesure rien. Vous pouvez vous y opposer à tout moment sur ce navigateur :</p>
+    <p class="gc-choix"><button type="button" class="gc" data-gc="Ne pas être compté|Être compté de nouveau" aria-pressed="false">Ne pas être compté</button> <span data-gc-etat="Vos visites sont comptées, de façon anonyme.|Vos visites ne sont pas comptées sur ce navigateur."></span></p>
     <h3>Cookies</h3>
-    <p>Fragments n'utilise aucun cookie ni traceur. C'est pourquoi aucun bandeau de consentement ne s'affiche.</p>
+    <p>Fragments n'utilise aucun cookie ni traceur publicitaire. La version web utilise seulement la mesure d'audience sans cookie décrite ci-dessus, exemptée de consentement : c'est pourquoi aucun bandeau de consentement ne s'affiche. Si vous choisissez « Ne pas être compté », la clé <code>skipgc</code> est enregistrée dans le stockage local de votre navigateur pour retenir ce choix.</p>
     <h3>Fonctions de l'appareil</h3>
     <p>Vibration : retours au toucher et aux réponses, désactivables dans les Réglages. L'ambiance sonore est générée en direct par l'appareil.</p>
     <h3>Hébergement</h3>
@@ -86,11 +90,11 @@
     <p>Pour toute question : <a href="mailto:aulit42369@gmail.com">aulit42369@gmail.com</a>, ou ouvrez un ticket sur <a href="https://github.com/fragments-jeu/fragments-jeu.github.io/issues" rel="noopener">la page GitHub du jeu</a>.</p>
   </section>
   <section class="feuille" id="en" lang="en">
-    <span class="tampon" aria-hidden="true">NO DATA</span>
+    <span class="tampon" aria-hidden="true">NO COOKIES</span>
     <h2>English · Privacy policy</h2>
-    <p class="date">Last updated: 26 October 2026. The French version is the reference text.</p>
+    <p class="date">Last updated: 28 October 2026. The French version is the reference text.</p>
     <h3>No data collected</h3>
-    <p>Fragments collects, transmits and sells no personal data. No ads, no analytics, no account, no player name. The game contacts no server: it only loads its own files (cases included), then works offline. Players' phones don't talk to each other: the code or QR, read by you, links the game.</p>
+    <p>Fragments collects, transmits and sells no personal data. No ads, no account, no player name. The app contacts no server; the web version loads its own files (cases included), counts visits anonymously (see “Visit statistics”), then works offline. Players' phones don't talk to each other: the code or QR, read by you, links the game.</p>
     <h3>Data kept on your device</h3>
     <p>The game in progress (case, code, clock, pieces found), your settings (language, sound, vibration) and your Daily case streak are stored only in the local storage of your browser or of the app. "Delete" in Settings removes the game; uninstalling the game or clearing its data erases everything.</p>
     <h3>Camera</h3>
@@ -99,8 +103,11 @@
     <p>"Share the result" and "Share the image" send nothing on their own: they open your device's share sheet (or copy the text, or download the image) and you choose where it goes. The text and image, created on your device, only contain the case number, the case title, your result, your streak and the game's link.</p>
     <h3>Google Play review (Android app)</h3>
     <p>After your third successful Daily case, the app may show Google Play's review window once. It is handled by Google Play; the publisher receives no personal data, only the public review if you choose to leave one.</p>
+    <h3>Visit statistics (web version only)</h3>
+    <p>The web version of the game uses <a href="https://www.goatcounter.com/help/privacy" rel="noopener">GoatCounter</a>, an audience measurement service operated from Ireland and hosted in the European Union (servers in Finland and Germany). It counts page views without cookies and without any identifier that would follow you from one visit to the next. Your IP address is only used to work out your country and to avoid counting the same visit twice: it is never stored (kept in memory for a few hours at most, then forgotten). Only overall statistics are kept: pages viewed, referring site, browser, approximate country and screen size. This measurement is only used to know how many people visit the game: it is exempt from consent under the CNIL's guidelines. Legal basis: legitimate interest in knowing the game's audience. The Android app measures nothing. You can opt out at any time on this browser:</p>
+    <p class="gc-choix"><button type="button" class="gc" data-gc="Don't count me|Count me again" aria-pressed="false">Don't count me</button> <span data-gc-etat="Your visits are counted anonymously.|Your visits are not counted on this browser."></span></p>
     <h3>Cookies and device features</h3>
-    <p>No cookies, no trackers, hence no consent banner. Vibration (can be turned off in Settings) and sound generated live on the device. The "More games by Aulit" card simply opens their web pages in your browser.</p>
+    <p>No cookies and no advertising trackers. The web version only uses the cookie-free audience measurement described above, which is exempt from consent, hence no consent banner. If you choose “Don't count me”, the <code>skipgc</code> key is saved in your browser's local storage to remember that choice. Vibration (can be turned off in Settings) and sound generated live on the device. The "More games by Aulit" card simply opens their web pages in your browser.</p>
     <h3>Hosting</h3>
     <p>The web version is hosted by GitHub Pages, which may log technical information such as IP addresses (see <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub's privacy statement</a>). This information may be processed in the United States: such transfers are covered by the EU–US Data Privacy Framework (adequacy decision of 10 July 2023) where the provider participates in it, and otherwise by the European Commission's standard contractual clauses.</p>
     <h3>Children and your rights</h3>
@@ -112,5 +119,25 @@
     Questions: <a href="mailto:aulit42369@gmail.com">aulit42369@gmail.com</a>, or open an issue on <a href="https://github.com/fragments-jeu/fragments-jeu.github.io/issues" rel="noopener">the game's GitHub page</a>.</p>
   </section>
 </main>
+<script>
+// « Ne pas être compté » : GoatCounter ne compte rien quand localStorage.skipgc === 't' (même règle que le Site).
+// Hors github.io (appli Android, local) le jeu ne compte rien : le bouton est masqué.
+(function () {
+  var web = /(^|\.)github\.io$/.test(location.hostname);
+  function off() { try { return localStorage.getItem('skipgc') === 't'; } catch (e) { return false; } }
+  function maj() {
+    var i = off() ? 1 : 0;
+    document.querySelectorAll('.gc-choix').forEach(function (el) { el.hidden = !web; });
+    document.querySelectorAll('[data-gc]').forEach(function (b) { b.textContent = b.getAttribute('data-gc').split('|')[i]; b.setAttribute('aria-pressed', String(!!i)); });
+    document.querySelectorAll('[data-gc-etat]').forEach(function (s) { s.textContent = s.getAttribute('data-gc-etat').split('|')[i]; });
+  }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-gc]')) return;
+    try { if (off()) localStorage.removeItem('skipgc'); else localStorage.setItem('skipgc', 't'); } catch (err) { /* stockage bloqué */ }
+    maj();
+  });
+  maj();
+})();
+</script>
 </body>
 </html>
