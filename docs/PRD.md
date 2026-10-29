@@ -11,7 +11,7 @@ les autres rejoignent avec un code (`BNK-4-7Q2X`) ou un QR. Gratuit, hors ligne 
 - Groupes d'amis réunis dans la même pièce qui cherchent un « party game entre amis sur téléphone » (requête SEO visée).
 - Groupes mixtes français / anglais (les réponses restent en français pour tous).
 - Communauté du stream d'Aulit42369 (Dossier du jour commun aux 4 jeux).
-- Profil précis (âge, pays) : à confirmer par Olivier.
+- Profil estimé : 13 ans et plus (groupes d'amis, ados et jeunes adultes), surtout France et pays francophones, quelques groupes anglophones via la langue anglaise (proposé par Claude le 29/10/2026, à corriger si besoin).
 
 ## Fonctions (présentes dans le code)
 | Fonction | Détail |
