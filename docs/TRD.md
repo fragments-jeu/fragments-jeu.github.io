@@ -8,7 +8,7 @@
 
 ## PWA
 - Hébergement : GitHub Pages, `https://fragments-jeu.github.io/` (organisation dédiée).
-- `sw.js` : cache d'abord, hors ligne complet ; `CACHE` (`fragments-v2.12` au 28/10/2026) à monter à chaque livraison ; ne purge que les caches `fragments-*`.
+- `sw.js` : cache d'abord, hors ligne complet ; `CACHE` (`fragments-v2.13` au 28/10/2026) à monter à chaque livraison ; ne purge que les caches `fragments-*`.
 - Manifest : `id` `/fragments/` (ne jamais changer).
 - CSP en balise meta : `script-src 'self'` + empreinte `sha256` du seul script en ligne exécutable (compteur GoatCounter) + `https://gc.zgo.at` ; `connect-src`/`img-src` + `https://aulit42369.goatcounter.com`.
 

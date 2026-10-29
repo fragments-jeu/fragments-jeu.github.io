@@ -42,3 +42,5 @@
 - 24/10 : série quotidienne gardée pour Fragments malgré les parties de 45 min (Q3, par cohérence entre les 4 jeux, en attente de confirmation).
 - 24/10 : score du jour = secondes restantes (0 hors temps) ; seul le téléphone du MJ (ou le solo) enregistre ; abandon non compté.
 - 24/10 : scénario du jour = scénarios triés par `id`, index = graine modulo leur nombre ; graine de partie = graine modulo 32768.
+
+- **29/10** : accessibilité et cohérence des 4 jeux + CRA : zoom de la page autorisé (viewport sans `user-scalable=no`), `touch-action:none` gardé sur la zone de jeu ; `:focus-visible` rétabli ; test commun `tests/manifest-sw.test.js` (identique dans les 4 jeux et CRA). `.hs:focus-visible` pour les zones de fouille, cache `fragments-v2.13` (le `prefers-reduced-motion` existait déjà dans `css/documents.css`). Meta description réécrite. `id` inchangé.
