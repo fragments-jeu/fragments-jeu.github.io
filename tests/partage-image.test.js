@@ -45,7 +45,7 @@ test('partage : annulé = rien ; refusé ou sans partage de fichiers = télécha
 
 test('autres jeux : les 3 autres, textes et liens convenus, nouvel onglet', () => {
   assert.deepEqual(A.autres().map((j) => [j.nom, j.texte, j.url]), [
-    ['ÉCHO', 'Un labyrinthe dans le noir, guidé par l\'écho', 'https://aulit42369.github.io/Echo/'],
+    ['ÉCHO', 'Un labyrinthe dans le noir, guidé par l\'écho', 'https://echo-jeu.github.io/'],
     ['LUMEN', 'Reliez les orbes, faites monter la lumière', 'https://lumen-jeu.github.io/'],
     ['Résonance', 'Croise les ondes, allume les nœuds', 'https://resonance-jeu.github.io/']
   ]);

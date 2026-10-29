@@ -1,5 +1,5 @@
 /* FRAGMENTS — service worker : cache d'abord, tout hors ligne (y compris les scénarios). */
-const CACHE = 'fragments-v2.13';
+const CACHE = 'fragments-v2.14';
 const ASSETS = [
   './', 'index.html', 'privacy.html', 'manifest.webmanifest', 'css/app.css', 'css/ecrans.css', 'css/documents.css', 'css/fouille.css', 'css/extras.css',
   'js/defi.js', 'js/engine.js', 'js/qr.js', 'js/docs.js', 'js/audio.js', 'js/i18n.js', 'js/autres-jeux.js', 'js/howto.js', 'js/share-image.js',

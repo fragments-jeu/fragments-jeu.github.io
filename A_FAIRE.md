@@ -44,3 +44,4 @@
 - 24/10 : scénario du jour = scénarios triés par `id`, index = graine modulo leur nombre ; graine de partie = graine modulo 32768.
 
 - **29/10** : accessibilité et cohérence des 4 jeux + CRA : zoom de la page autorisé (viewport sans `user-scalable=no`), `touch-action:none` gardé sur la zone de jeu ; `:focus-visible` rétabli ; test commun `tests/manifest-sw.test.js` (identique dans les 4 jeux et CRA). `.hs:focus-visible` pour les zones de fouille, cache `fragments-v2.13` (le `prefers-reduced-motion` existait déjà dans `css/documents.css`). Meta description réécrite. `id` inchangé.
+- **29/10** : ÉCHO a déménagé sur https://echo-jeu.github.io/ : lien « autres jeux » mis à jour, cache `fragments-v2.14`, test commun `manifest-sw` recopié (ÉCHO `/`).

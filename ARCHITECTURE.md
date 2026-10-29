@@ -68,7 +68,7 @@ Aucun secret, aucun réseau, aucune donnée personnelle. Le texte partagé ne co
 ## 5. Identité
 - Domaine : organisation GitHub `fragments-jeu` → `https://fragments-jeu.github.io/`.
 - `id` du manifest : `/fragments/` (ne jamais changer).
-- Cache : `fragments-v2.13` ; le SW ne supprime que les caches `fragments-*`.
+- Cache : `fragments-v2.14` ; le SW ne supprime que les caches `fragments-*`.
 
 ## 6. Dépendances externes
 Aucune. `navigator.share` / presse-papiers facultatifs (repli : zone de texte à copier ; pour l'image : téléchargement du PNG si le partage de fichiers est refusé).
