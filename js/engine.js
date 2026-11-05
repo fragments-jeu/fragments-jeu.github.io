@@ -177,7 +177,7 @@
   }
 
   // ---- Dossier du jour (même logique que engine/Daily.kt de l'appli Android 2.0) ----
-  const DAILY_URL = 'https://fragments-jeu.github.io/';
+  const DAILY_URL = 'https://fragments.aulit42369.fr/';
   const DAILY_CELLS = ['🟩', '🟨', '🟧', '🟥'];
 
   /** Scénario et graine du jour. scenarios : liste de data/index.json ; seed32 : Defi.seed('fragments', key).

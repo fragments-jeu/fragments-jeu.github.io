@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fragments-jeu.github.io/sitemap.xml
+Sitemap: https://fragments.aulit42369.fr/sitemap.xml

@@ -7,17 +7,17 @@
 - Ordre de chargement imposé : `js/defi.js` (premier) → `engine.js` → `i18n.js` → `qr.js` → `docs.js` → `audio.js` → `autres-jeux.js` → `howto.js` → `share-image.js` → `app-etat.js` → `app-joueur.js` → `app-mj.js` → `app-accueil.js` → `app.js` (dernier).
 
 ## PWA
-- Hébergement : GitHub Pages, `https://fragments-jeu.github.io/` (organisation dédiée).
+- Hébergement : adresse officielle `https://fragments.aulit42369.fr/` (serveur OVH d'Olivier, copie de `main` toutes les 5 min) ; secours GitHub Pages `https://fragments-jeu.github.io/` (organisation dédiée).
 - `sw.js` : cache d'abord, hors ligne complet ; `CACHE` (`fragments-v2.14` au 29/10/2026) à monter à chaque livraison ; ne purge que les caches `fragments-*`.
 - Manifest : `id` `/fragments/` (ne jamais changer).
 - CSP en balise meta : `script-src 'self'` + empreinte `sha256` du seul script en ligne exécutable (compteur GoatCounter) + `https://gc.zgo.at` ; `connect-src`/`img-src` + `https://aulit42369.goatcounter.com`.
 
 ## Traceurs (28/10/2026)
 - Aucun cookie. Seul traceur : **GoatCounter**, mesure d'audience sans cookie (compte `aulit42369.goatcounter.com`, le même que le Site et la vitrine de La Cabane), chemins préfixés `/fragments/…` (option `path`) pour distinguer le jeu dans le tableau de bord.
-- Script d'une ligne en fin de `index.html` : charge `count.v4.js` (version figée + SRI `sha384`, comme le Site) **seulement** si `location.hostname` se termine par `github.io` (jamais dans une appli Android, une WebView, `file://` ni en local) et si `localStorage.skipgc` ≠ `'t'`.
+- Script d'une ligne en fin de `index.html` : charge `count.v4.js` (version figée + SRI `sha384`, comme le Site) **seulement** si `location.hostname` se termine par `github.io` ou `aulit42369.fr` (jamais dans une appli Android, une WebView, `file://` ni en local) et si `localStorage.skipgc` ≠ `'t'`.
 - CSP : empreinte `sha256` de ce script + `https://gc.zgo.at` dans `script-src`, `https://aulit42369.goatcounter.com` dans `connect-src` et `img-src`. Modifier le script = recalculer l'empreinte (`tests/statistiques.test.js` échoue sinon).
 - Le SW ignore les requêtes d'autres origines : `count.js` et les envois ne sont jamais mis en cache.
-- Opposition : bouton « Ne pas être compté » de `privacy.html` (toutes les langues), clé locale `skipgc` ; bouton masqué hors `github.io`.
+- Opposition : bouton « Ne pas être compté » de `privacy.html` (toutes les langues), clé locale `skipgc` ; bouton masqué hors `github.io` / `aulit42369.fr`.
 
 ## Android
 - Appli Kotlin + Compose 2.0/2.1 : `F:\Stream\files\JEUX\fragments\android` (hors de ce dépôt), AAB prêt, pas encore publié.

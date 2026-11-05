@@ -1,5 +1,5 @@
 // Statistiques GoatCounter sans cookie : identique dans les 4 jeux, seul PREFIXE change.
-// Vérifie la garde github.io (jamais dans l'appli ni en local), skipgc, la CSP et le chemin préfixé.
+// Vérifie la garde github.io / aulit42369.fr (jamais dans l'appli ni en local), skipgc, la CSP et le chemin préfixé.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
@@ -46,10 +46,13 @@ test('compte seulement sur github.io, avec count.v4.js figé + SRI et le chemin 
   assert.strictEqual(ajoute['data-goatcounter'], 'https://aulit42369.goatcounter.com/count');
   const canon = new URL(html.match(/rel="canonical" href="([^"]+)"/)[1]).pathname;
   assert.strictEqual(gc.path(canon), PREFIXE + '/');
+  for (const h of ['aulit42369.fr', 'echo.aulit42369.fr', 'fragments.aulit42369.fr']) {
+    assert.ok(lancer(h, null).ajoute, 'rien chargé sur « ' + h + ' »');
+  }
 });
 
 test('ne compte jamais hors github.io (appli Android, WebView, fichier, local)', () => {
-  for (const h of ['', 'localhost', '127.0.0.1', 'appassets.androidplatform.net', 'github.io.exemple.com', 'faux-github.io.net']) {
+  for (const h of ['', 'localhost', '127.0.0.1', 'appassets.androidplatform.net', 'github.io.exemple.com', 'faux-github.io.net', 'fauxaulit42369.fr', 'aulit42369.fr.exemple.com']) {
     assert.strictEqual(lancer(h, null).ajoute, null, 'compté sur « ' + h + ' »');
   }
 });

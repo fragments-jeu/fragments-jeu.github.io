@@ -6,7 +6,7 @@
   else root.FragShareImage = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  const W = 1080, H = 1920, URL_JEU = 'https://fragments-jeu.github.io/';
+  const W = 1080, H = 1920, URL_JEU = 'https://fragments.aulit42369.fr/';
   // Cases par énigme : 0 indice vert, 1 jaune, 2 orange, 3 rouge ; non résolue noire (mêmes règles que shareDaily).
   const CELL = ['#5d9e4f', '#d9b23a', '#d9782b', '#b8322a'], CELL_NONE = '#17140f';
 

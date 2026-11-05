@@ -8,10 +8,10 @@
   // Liens web des 4 jeux : à remplacer par le lien Play Store quand l'appli sera publiée
   // (https://play.google.com/store/apps/details?id= com.aulit.echo, com.aulit.lumen, com.aulit.fragments, fr.aulit.resonance).
   const JEUX = [
-    { id: 'echo', nom: 'ÉCHO', texte: 'Un labyrinthe dans le noir, guidé par l\'écho', url: 'https://echo-jeu.github.io/' },
-    { id: 'lumen', nom: 'LUMEN', texte: 'Reliez les orbes, faites monter la lumière', url: 'https://lumen-jeu.github.io/' },
-    { id: 'fragments', nom: 'Fragments', texte: 'Party game : chacun tient une pièce du dossier', url: 'https://fragments-jeu.github.io/' },
-    { id: 'resonance', nom: 'Résonance', texte: 'Croise les ondes, allume les nœuds', url: 'https://resonance-jeu.github.io/' }
+    { id: 'echo', nom: 'ÉCHO', texte: 'Un labyrinthe dans le noir, guidé par l\'écho', url: 'https://echo.aulit42369.fr/' },
+    { id: 'lumen', nom: 'LUMEN', texte: 'Reliez les orbes, faites monter la lumière', url: 'https://lumen.aulit42369.fr/' },
+    { id: 'fragments', nom: 'Fragments', texte: 'Party game : chacun tient une pièce du dossier', url: 'https://fragments.aulit42369.fr/' },
+    { id: 'resonance', nom: 'Résonance', texte: 'Croise les ondes, allume les nœuds', url: 'https://resonance.aulit42369.fr/' }
   ];
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const autres = () => JEUX.filter((j) => j.id !== MOI);

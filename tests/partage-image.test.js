@@ -45,12 +45,12 @@ test('partage : annulé = rien ; refusé ou sans partage de fichiers = télécha
 
 test('autres jeux : les 3 autres, textes et liens convenus, nouvel onglet', () => {
   assert.deepEqual(A.autres().map((j) => [j.nom, j.texte, j.url]), [
-    ['ÉCHO', 'Un labyrinthe dans le noir, guidé par l\'écho', 'https://echo-jeu.github.io/'],
-    ['LUMEN', 'Reliez les orbes, faites monter la lumière', 'https://lumen-jeu.github.io/'],
-    ['Résonance', 'Croise les ondes, allume les nœuds', 'https://resonance-jeu.github.io/']
+    ['ÉCHO', 'Un labyrinthe dans le noir, guidé par l\'écho', 'https://echo.aulit42369.fr/'],
+    ['LUMEN', 'Reliez les orbes, faites monter la lumière', 'https://lumen.aulit42369.fr/'],
+    ['Résonance', 'Croise les ondes, allume les nœuds', 'https://resonance.aulit42369.fr/']
   ]);
   assert.equal(A.JEUX.find((j) => j.id === 'fragments').texte, 'Party game : chacun tient une pièce du dossier');
   const h = A.html((s) => s);
   assert.equal((h.match(/target="_blank" rel="noopener"/g) || []).length, 3);
-  assert.ok(h.includes('Les autres jeux d&#39;Aulit') && !h.includes('fragments-jeu.github.io'));
+  assert.ok(h.includes('Les autres jeux d&#39;Aulit') && !h.includes('fragments.aulit42369.fr'));
 });

@@ -44,7 +44,7 @@ test('shareDaily : cases par énigme et détail', () => {
   const t = Defi.shareText(a).split('\n');
   assert.equal(t[0], 'FRAGMENTS #24 🗂️ Le Train de Nuit ⭐⭐');
   assert.equal(t[3], '🔥 2 jours de suite');
-  assert.equal(t[t.length - 1], 'https://fragments-jeu.github.io/');
+  assert.equal(t[t.length - 1], 'https://fragments.aulit42369.fr/');
   const h = Defi.shareText(E.shareDaily({ ...base, stars: 0, timedOut: true, hints: [0, 0, 0, 0, 0], wrong: 0, serie: 1 }));
   assert.ok(h.includes('☆') && h.includes('hors temps · sans indice · sans erreur'));
   assert.ok(!h.includes('🔥'));

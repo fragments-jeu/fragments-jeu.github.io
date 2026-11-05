@@ -3,7 +3,7 @@
 Jeu d'évasion coopératif hors ligne, de 3 à 6 joueurs, chacun sur son téléphone. Un téléphone est le
 maître du jeu (chrono, serrure, indices), les autres rejoignent avec un code (`BNK-4-7Q2X`) ou un QR.
 
-Publié sur https://fragments-jeu.github.io/ (dépôt `fragments-jeu.github.io`, GitHub Pages).
+Adresse officielle : https://fragments.aulit42369.fr/ (serveur d'Olivier, copie de la branche `main` toutes les 5 min, depuis le 05/11/2026). Secours toujours en ligne : https://fragments-jeu.github.io/ (dépôt `fragments-jeu.github.io`, GitHub Pages).
 L'appli Android (Kotlin, Compose) vit dans `F:\Stream\files\JEUX\fragments\android`.
 
 ## Dossier du jour
