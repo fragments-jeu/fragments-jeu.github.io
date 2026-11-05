@@ -1,6 +1,7 @@
 # Fragments — à faire
 
 ## Fait
+- **05/11/2026 : CSP stricte sur toutes les pages** (`index`, `privacy`, `404`) : plus aucun script en ligne (compteur GoatCounter → `js/stats.js`, code de `privacy.html` → `js/privacy.js`), `script-src 'self' https://gc.zgo.at`, `base-uri`/`object-src`/`form-action` `'none'`, `data:`/`blob:` retirés là où rien ne s'en sert ; cache `fragments-v2.16` ; `tests/csp.test.js` (commun aux 4 jeux). Vérifié dans Chromium sans tête : 0 violation CSP, 0 erreur JS, GoatCounter envoie bien sur le domaine officiel.
 - 24/10 : « Dossier du jour » (idée 14) : dossier sur l'accueil entre « Créer une partie » et « Rejoindre », scénario et graine communs à tous (minuit heure de Paris), aussi en mode test solo, série de jours, écran de fin avec série, record, compte à rebours et partage en un message (repli zone de texte). Module commun `js/defi.js`, tests `node --test` (16 verts), cache `fragments-v2.3`.
 - 24/10 : correctif des icônes géantes dans les boutons (« Partager le résultat », « Scanner le QR »).
 - 24/10 : création de README, ARCHITECTURE, PIEGES, A_FAIRE.
