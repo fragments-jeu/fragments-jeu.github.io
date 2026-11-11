@@ -22,6 +22,8 @@
 - **28/10** : docs de cadrage créées dans `docs/` (PRD, TRD, APP_FLOW, DESIGN_BRIEF, BACKEND_SCHEMA, IMPLEMENTATION_PLAN), d'après le code. Aucun fichier du jeu modifié (cache inchangé `fragments-v2.11`).
 - **28/10** : mesure d'audience **GoatCounter sans cookie** (même compte et même méthode que le Site) : chemins `/fragments/…`, comptée seulement sur `*.github.io` (jamais dans l'appli Android, une WebView, en local), opposition `skipgc` + bouton « Ne pas être compté » dans `privacy.html` (toutes les langues, texte repris du Site, liste des traceurs et date mises à jour), CSP élargie (empreinte du script, `gc.zgo.at`, `aulit42369.goatcounter.com`), cache `fragments-v2.12`, `tests/statistiques.test.js`. Vérifié dans Chrome sans tête (URL github.io simulée : un envoi `/fragments/` ; local et `skipgc` : aucun ; 0 erreur console/CSP).
 
+- **11/11** : animations F2 (cadenas qui s'ouvre sur code juste), F4 (« −0:10 » / « −1:00 » flottant + chrono qui flashe rouge, sur erreur et indice), F8 (tampon « Dossier clos » vert / « Temps écoulé » rouge, secousse + anneau). transform/opacity, coupées en « réduire les animations ». Cache `fragments-v2.17`. Tests 54 verts, vérifié dans Chrome (0 erreur console). Commit local, pas poussé. L'appli Android embarque une copie du web (assets) : à resynchroniser avant la prochaine version.
+
 ## En cours
 
 ## À faire

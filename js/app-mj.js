@@ -100,17 +100,33 @@
     refreshConsole();
     if (entry.length === ans.length && S.game._sc.stages[S.game.stage].input === 'digits') setTimeout(() => { if (S.view.entry === entry) submit(entry); }, 260);
   }
+  // F2 : cadenas qui s'ouvre au-dessus des cases (posé dans .lock, jamais reconstruit pendant les 650 ms)
+  const PADLOCK = '<div class="padlock" aria-hidden="true"><svg viewBox="0 0 48 56"><path class="shackle" d="M14 26V16a10 10 0 0 1 20 0v2" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><rect class="body" x="6" y="26" width="36" height="26" rx="5" fill="currentColor"/></svg></div>';
+  // F4 : « −m:ss » flottant au-dessus du chrono (élément séparé : le chrono et la console sont réécrits en continu)
+  function penaltyFloat(sec) {
+    const vfd = $app.querySelector('.vfd');
+    if (!vfd) return;
+    vfd.classList.remove('hit'); void vfd.offsetWidth; vfd.classList.add('hit');
+    const r = vfd.getBoundingClientRect(), el = document.createElement('div');
+    el.className = 'penalty-float'; el.setAttribute('aria-hidden', 'true');
+    el.textContent = '−' + Math.floor(sec / 60) + ':' + (sec % 60 < 10 ? '0' : '') + (sec % 60);
+    el.style.left = (r.left + r.width / 2) + 'px'; el.style.top = (r.top + r.height / 2) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 900);
+  }
   function submit(entry) {
     const ans = answerOf(S.game.stage);
     if (entry.length < ans.length) { toast(T('Code incomplet')); return; }
     const slots = $app.querySelector('[data-slots]');
     if (E.normalize(entry) === ans) {
       slots && slots.classList.add('right');
+      slots && slots.parentNode.insertAdjacentHTML('afterbegin', PADLOCK);
       A.play('success'); buzz([30, 40, 80]);
       setTimeout(stageSolved, 650);
     } else {
       S.game.penalty += E.WRONG_COST; S.game.wrong++; saveGame();
       slots && slots.classList.add('wrong');
+      penaltyFloat(E.WRONG_COST);
       A.play('fail'); buzz([120, 60, 120]);
       setTimeout(() => { S.view.entry = ''; refreshConsole(); }, 520);
     }
@@ -167,7 +183,7 @@
     const finalWord = e.won && g.lastWord ? '<p class="prompt">' + T('Mot final pour lire l\'épilogue sur les téléphones des joueurs :') + '</p><div class="password" data-word>' + esc(g.lastWord.word) + '</div>' : '';
     return '<main class="screen end">' +
       (g.defi ? '<div class="label daily-tag">' + T('Dossier du jour #{0}', g.defi.n) + '</div>' : '') +
-      '<div class="verdict">' + T(e.won ? 'Dossier clos' : e.abandon ? 'Abandon' : 'Temps écoulé') + '</div>' +
+      '<div class="verdict ' + (e.won ? 'win' : 'lose') + '">' + T(e.won ? 'Dossier clos' : e.abandon ? 'Abandon' : 'Temps écoulé') + '</div>' +
       '<p class="prompt">' + esc(sc.title) + '</p>' +
       '<div class="stars" aria-label="' + TN(e.stars, '{0} étoile sur 3', '{0} étoiles sur 3') + '">' + st + '</div>' +
       '<div class="stats"><div><b>' + E.fmtTime(e.used) + '</b><small>' + T('temps') + '</small></div><div><b>' + e.hints + '</b><small>' + TN(e.hints, 'indice', 'indices') + '</small></div><div><b>' + g.wrong + '</b><small>' + TN(g.wrong, 'erreur', 'erreurs') + '</small></div></div>' +
@@ -182,5 +198,5 @@
       '<button class="btn ghost" data-act="newGame">' + T('Retour à l\'accueil') + '</button></div></main>';
   };
 
-  Object.assign(F, { joinUrl, lockState, consoleHtml, answerOf, startTick, refreshConsole, pressKey, submit, stageSolved, showWord, finish, recordDaily });
+  Object.assign(F, { penaltyFloat, joinUrl, lockState, consoleHtml, answerOf, startTick, refreshConsole, pressKey, submit, stageSolved, showWord, finish, recordDaily });
 })();

@@ -30,7 +30,7 @@
       if (n >= 3) return;
       overlay('<h3>' + T('Indice {0}', n + 1) + '</h3><p>' + TN(E.HINT_COST[n] / 60, 'Il coûte {0} minute au chrono. Le groupe est d\'accord ?', 'Il coûte {0} minutes au chrono. Le groupe est d\'accord ?') + '</p><div class="row"><button class="btn ghost" data-o="no">' + T('Annuler') + '</button><button class="btn" data-o="yes">' + T('Révéler') + '</button></div>', (o) => {
         if (o !== 'yes') return;
-        S.game.penalty += E.HINT_COST[n]; S.game.hints[S.game.stage] = n + 1; saveGame(); A.play('hint'); buzz(20); refreshConsole();
+        S.game.penalty += E.HINT_COST[n]; S.game.hints[S.game.stage] = n + 1; saveGame(); A.play('hint'); buzz(20); refreshConsole(); F.penaltyFloat(E.HINT_COST[n]);
       });
     },
     showWord: () => showWord(false),
