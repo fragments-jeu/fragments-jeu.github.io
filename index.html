@@ -29,6 +29,22 @@
 <link rel="stylesheet" href="css/documents.css">
 <link rel="stylesheet" href="css/fouille.css">
 <link rel="stylesheet" href="css/extras.css">
+<!-- Préchargement : la CSP en <meta> empêche Chrome de repérer les scripts en avance (chargés un par un sinon) -->
+<link rel="preload" href="js/defi.js" as="script">
+<link rel="preload" href="js/engine.js" as="script">
+<link rel="preload" href="js/i18n.js" as="script">
+<link rel="preload" href="js/qr.js" as="script">
+<link rel="preload" href="js/docs.js" as="script">
+<link rel="preload" href="js/audio.js" as="script">
+<link rel="preload" href="js/autres-jeux.js" as="script">
+<link rel="preload" href="js/howto.js" as="script">
+<link rel="preload" href="js/share-image.js" as="script">
+<link rel="preload" href="js/app-etat.js" as="script">
+<link rel="preload" href="js/app-joueur.js" as="script">
+<link rel="preload" href="js/app-mj.js" as="script">
+<link rel="preload" href="js/app-accueil.js" as="script">
+<link rel="preload" href="js/app.js" as="script">
+<link rel="preload" href="js/stats.js" as="script">
 </head>
 <body>
 <div id="app" aria-live="polite"></div>
