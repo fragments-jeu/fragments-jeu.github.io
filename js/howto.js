@@ -12,7 +12,7 @@
       '<div class="step">' + ill1 + '<div><h4>' + T('Un maître du jeu') + '</h4><p>' + T('Un téléphone crée la partie et affiche un code. Il garde le chrono, la serrure et les indices.') + '</p></div></div>' +
       '<div class="step">' + ill2 + '<div><h4>' + T('Chacun sa pièce à fouiller') + '</h4><p>' + T('Chaque joueur rejoint avec le code et fouille une salle différente : tiroirs, poches, dessous de matelas. Décrivez vos trouvailles à voix haute, sans montrer votre écran.') + '</p></div></div>' +
       '<div class="step">' + ill3 + '<div><h4>' + T('La serrure') + '</h4><p>' + T('Quand le groupe a trouvé, il tape la réponse sur le téléphone du maître du jeu. Un mot de passage s\'affiche : chacun le tape pour recevoir la suite.') + '</p></div></div>' +
-      '</div><div class="intro" style="margin-top:20px"><p>' + T('De 3 à 6 joueurs, 45 minutes. Une erreur coûte 10 secondes, un indice de 1 à 3 minutes. Finissez avec plus de 15 minutes pour trois étoiles.') + '</p></div>' +
-      '<div class="grow"></div><button class="btn" data-act="create" style="margin-top:18px">' + T('Créer une partie') + '</button></main>';
+      '</div><div class="intro mt20"><p>' + T('De 3 à 6 joueurs, 45 minutes. Une erreur coûte 10 secondes, un indice de 1 à 3 minutes. Finissez avec plus de 15 minutes pour trois étoiles.') + '</p></div>' +
+      '<div class="grow"></div><button class="btn mt18" data-act="create">' + T('Créer une partie') + '</button></main>';
   };
 })(typeof self !== 'undefined' ? self : this);

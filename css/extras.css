@@ -18,9 +18,42 @@
 .autres li + li { border-top: 1px dashed rgba(91, 82, 68, .45); }
 .autres a { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: 'n b f' 'n s f'; column-gap: 12px; align-items: center;
   min-height: 64px; padding: 10px 2px; color: inherit; text-decoration: none; }
-.autres a i { grid-area: n; font: 700 13px var(--f-type); font-style: normal; color: var(--red); transform: rotate(-8deg); }
+.autres a i { grid-area: n; font: 700 13px var(--f-type); font-style: normal; color: #9a2721; /* ≥ 4,5:1 sur le papier */ transform: rotate(-8deg); }
 .autres a b { grid-area: b; font: 900 21px var(--f-stencil); letter-spacing: .05em; }
 .autres a span { grid-area: s; font: 400 15px var(--f-type); color: var(--ink-soft); line-height: 1.3; }
 .autres a svg { grid-area: f; width: 22px; height: 22px; fill: none; stroke: var(--red); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
 .autres a:hover svg, .autres a:focus-visible svg { transform: translateX(4px); }
 .autres a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* ===== Audit du 18/11/2026 ===== */
+/* Classes utilitaires : plus aucun attribut style dans le HTML généré (CSP sans 'unsafe-inline') */
+.m0 { margin: 0; } .mt4 { margin-top: 4px; } .mt6 { margin-top: 6px; } .mt10 { margin-top: 10px; } .mt12 { margin-top: 12px; }
+.mt18 { margin-top: 18px; } .mt20 { margin-top: 20px; } .mt22 { margin-top: 22px; } .mb14 { margin-bottom: 14px; } .my16 { margin: 16px 0; }
+.tc { text-align: center; } .intro.gauche { text-align: left; }
+.scan-video { width: 100%; border-radius: 10px; background: #000; }
+.btn.compact { width: auto; flex: none; min-height: 44px; padding: 0 16px; font-size: 17px; } /* « Effacer » : ne casse plus « Partie en cours » sur 3 lignes */
+.stub { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; margin: 6px 0 12px; font-family: var(--f-stencil); font-weight: 900; text-align: center; }
+.stub-k { font: 13px var(--f-type); }
+.stub-v { font-size: 40px; letter-spacing: .06em; }
+.stub-fl { font-size: 26px; }
+.stub-pied { grid-column: 1 / -1; display: flex; justify-content: space-around; border-top: 1px dashed #a2874d; padding-top: 8px; font: 700 15px var(--f-type); }
+/* Interrupteurs : zone de touche 44 px (piste dessinée de 32 px au milieu) */
+.switch { height: 44px; background: none; box-shadow: none; }
+.switch::before { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 32px; border-radius: 16px; background: var(--desk-3); box-shadow: inset 0 0 0 1.5px var(--rule); transition: background .2s; }
+.switch::after { top: 10px; }
+.switch[aria-checked='true'] { background: none; }
+.switch[aria-checked='true']::before { background: var(--glow-dim); }
+.switch:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; border-radius: 16px; }
+/* Onglets du mode solo : passent à la ligne au lieu d'être coupés à droite sans indice ; 44 px de haut */
+.tabs { flex-wrap: wrap; overflow: visible; }
+.tabs button { min-height: 44px; }
+/* Lien légal : même place (bas des réglages) et même taille dans les 4 jeux */
+.lien-legal { display: inline-flex !important; align-items: center; min-height: 44px; font-size: 16px; text-decoration: underline; text-underline-offset: 3px; }
+/* N° du Dossier du jour : tampon plein (contraste ≥ 4,5:1 sur le papier) */
+.folder.daily .stamp { opacity: 1; }
+/* Feuille de pause : Reprendre / Recommencer / Menu */
+.pause-card .stack { margin-top: 8px; }
+.pause-card h3 { text-align: center; }
+/* « Mouvement réduit » coché dans les Réglages : même effet que la préférence du système */
+html.rm *, html.rm *::before, html.rm *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+html.rm .penalty-float, html.rm .padlock::before, html.rm .vfd.hit::after { display: none; }

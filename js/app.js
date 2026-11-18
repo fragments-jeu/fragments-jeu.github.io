@@ -20,11 +20,9 @@
       if (draft.solo) { startClock(); go('solo'); } else go('lobby');
     },
     startClock: () => { startClock(); go('host'); },
-    pause: () => {
-      if (S.game.paused) { S.game.paused = false; S.game.runningSince = Date.now(); A.startDrone(S.game.scenarioId); keepAwake(true); }
-      else { S.game.elapsedBefore = elapsed(S.game); S.game.paused = true; S.game.runningSince = 0; A.stopDrone(); }
-      saveGame(); go(S.game.role === 'solo' ? 'solo' : 'host', { entry: S.view.entry });
-    },
+    // Bouton pause : arrête le chrono et ouvre la feuille Reprendre / Recommencer / Menu (même feuille dans les 4 jeux).
+    // Partie déjà en pause (reprise depuis l'accueil) : le bouton ▶ relance le chrono directement.
+    pause: () => { if (S.game.paused) reprendreChrono(); else ouvrirPause(); },
     hint: () => {
       const n = S.game.hints[S.game.stage];
       if (n >= 3) return;
@@ -58,6 +56,41 @@
     },
     wipe: () => { S.game = null; saveGame(); toast(T('Partie effacée')); go('settings'); }
   };
+  const vueMJ = () => (S.game.role === 'solo' ? 'solo' : 'host');
+  function reprendreChrono() {
+    S.game.paused = false; S.game.runningSince = Date.now(); A.startDrone(S.game.scenarioId); keepAwake(true);
+    saveGame(); go(vueMJ(), { entry: S.view.entry });
+  }
+  function ouvrirPause() {
+    if (!S.game.paused) { S.game.elapsedBefore = elapsed(S.game); S.game.paused = true; S.game.runningSince = 0; A.stopDrone(); saveGame(); go(vueMJ(), { entry: S.view.entry }); }
+    overlay('<div class="pause-card"><h3>' + T('Pause') + '</h3><p class="tc">' + T('Le chrono est arrêté.') + '</p><div class="stack">' +
+      '<button class="btn" data-o="resume">' + T('Reprendre') + '</button>' +
+      '<button class="btn ghost" data-o="restart">' + T('Recommencer') + '</button>' +
+      '<button class="btn ghost" data-o="menu">' + T('Menu') + '</button></div></div>', (o) => {
+      if (o === 'resume') reprendreChrono();
+      else if (o === 'restart') { // même scénario, même code : chrono, énigmes, indices et erreurs remis à zéro
+        Object.assign(S.game, { stage: 0, started: false, runningSince: 0, elapsedBefore: 0, paused: false, penalty: 0, hints: S.game.hints.map(() => 0), wrong: 0, lastWord: null, ended: null });
+        saveGame();
+        if (S.game.role === 'solo') { startClock(); go('solo', { entry: '' }); } else go('lobby');
+      } else if (o === 'menu') go('home'); // partie gardée en pause : « Reprendre » sur l'accueil
+    });
+  }
+  // Bouton Retour du téléphone : ferme la fenêtre ouverte, ouvre la pause en partie, sinon revient à l'accueil.
+  function boutonRetour() {
+    const o = document.querySelector('.overlay');
+    if (o) { const b = o.querySelector('[data-o=resume], [data-o=no], [data-o=x], [data-o=ok]'); if (b) b.click(); else o.remove(); return; }
+    const sh = document.querySelector('.sheet-wrap');
+    if (sh) { sh.remove(); return; }
+    const v = S.view.name;
+    if ((v === 'host' || v === 'solo') && S.game && !S.game.ended) ouvrirPause();
+    else if (v === 'player' && S.game) ACTIONS.leave();
+    else if (v === 'end' && S.game) ACTIONS.newGame();
+    else go('home'); // création, rejoindre, comment jouer, réglages, salle d'attente (partie gardée : « Reprendre »)
+  }
+  window.addEventListener('popstate', () => {
+    if (F.hist.retour) { F.hist.retour = false; F.histSync(); return; }
+    F.hist.pose = false; boutonRetour(); F.histSync();
+  });
   function startClock() {
     S.game.started = true; S.game.paused = false; S.game.runningSince = Date.now(); saveGame();
     A.unlock(); A.startDrone(S.game.scenarioId); keepAwake(true);
@@ -83,7 +116,7 @@
     if (t.dataset.n) { draft.players = +t.dataset.n; $app.querySelectorAll('[data-n]').forEach((b) => b.setAttribute('aria-pressed', b === t)); return; }
     if (t.dataset.tab) { S.game.soloView = +t.dataset.tab; saveGame(); go('solo', { entry: S.view.entry, ui: S.view.ui, forced: S.view.forced }); return; }
     if (t.dataset.lang) { if (t.dataset.lang !== I.lang) { I.setLang(t.dataset.lang); location.reload(); } return; }
-    if (t.dataset.set) { settings[t.dataset.set] = !settings[t.dataset.set]; save(LS_SET, settings); A.setEnabled(settings.sound); t.setAttribute('aria-checked', settings[t.dataset.set]); if (t.dataset.set === 'vibrate') buzz(30); return; }
+    if (t.dataset.set) { settings[t.dataset.set] = !settings[t.dataset.set]; save(LS_SET, settings); A.setEnabled(settings.sound); F.applyMotion(); t.setAttribute('aria-checked', settings[t.dataset.set]); if (t.dataset.set === 'vibrate') buzz(30); return; }
     if (t.dataset.seatn) {
       const d = S.view.decoded, sc = byPrefix(d.prefix);
       S.game = hydrate({ role: 'player', scenarioId: sc.id, players: d.players, seed: d.seed, code: d.code, playerNo: +t.dataset.seatn, stage: 0, ended: null });
@@ -131,6 +164,6 @@
     if (m) { history.replaceState(null, '', location.pathname); go('join', { prefill: m[1] }); }
     else go('home');
     if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
-    window.__frag = { get game() { return S.game; }, E, go, answerOf: (s) => answerOf(s) };
+    window.__frag = { get game() { return S.game; }, get view() { return S.view; }, E, go, answerOf: (s) => answerOf(s), submit: (x) => F.submit(x) };
   })();
 })();

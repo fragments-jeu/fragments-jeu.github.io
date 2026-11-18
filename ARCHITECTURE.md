@@ -92,3 +92,9 @@ GoatCounter sans cookie, chemins `/fragments/…`, chargé par le script d'une l
 ## Performances (16/11/2026)
 - Scripts préchargés en parallèle (`rel=preload` dans `<head>`, voir PIEGES) ; polices `.woff2` gardées un an par Caddy
   (`serveur-aulit/Caddyfile`, snippet `statique`), le reste 10 min.
+
+## Audit du 18/11/2026 (pause, Retour, accessibilité)
+- `app-etat.js` : `rendre(el, html)` = `innerHTML` + `styler()` (attributs `data-s` → CSSOM) + `typo()` (U+202F avant ? ! ; : en français) ; utilisé par `go()`, `overlay()`, la feuille de fouille, la console et le choix de siège. `histSync()` : une entrée d'historique tant que la vue n'est pas l'accueil ou qu'une fenêtre est ouverte (appelé par `go()`, `overlay()`, chaque clic).
+- `app.js` : `ouvrirPause()` (arrête le chrono, feuille Reprendre / Recommencer / Menu), `reprendreChrono()`, `boutonRetour()` + écouteur `popstate`.
+- `app-mj.js` : `submit()` verrouillé par `S.view.verif` jusqu'à la fin de l'animation (520 ms faux, 650 ms juste).
+- Classes utilitaires (`mt4`…`mt22`, `tc`, `stub-*`, `btn.compact`, `scan-video`) en fin de `css/extras.css`.

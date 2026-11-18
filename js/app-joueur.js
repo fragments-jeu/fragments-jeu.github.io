@@ -37,7 +37,7 @@
       const done = found.indexOf(i) >= 0, k = c.spots[i];
       const cls = 'hs' + (done ? (k >= 0 ? ' got' : ' empty') : '') + (h.lock && !done ? ' locked' : '');
       o += '<g class="' + cls + '" data-spot="' + i + '" role="button" tabindex="0" aria-label="' + T('Fouiller {0}', esc(h.label)) + (done ? T(' (déjà fouillé)') : '') + '">' +
-        '<circle class="hit" cx="' + h.x + '" cy="' + h.y + '" r="' + Math.max(h.r, 20) + '"/>' +
+        '<circle class="hit" cx="' + h.x + '" cy="' + h.y + '" r="' + Math.max(h.r, 26) + '"/>' + // zone de touche ≥ 44 px à l'écran
         '<circle class="ring" cx="' + h.x + '" cy="' + h.y + '" r="' + h.r + '"/>' +
         (done ? (k >= 0 ? '<path class="mark" d="M' + (h.x - 6) + ' ' + h.y + 'l4 5l9-10"/>' : '<path class="mark" d="M' + (h.x - 5) + ' ' + (h.y - 5) + 'l10 10M' + (h.x + 5) + ' ' + (h.y - 5) + 'l-10 10"/>')
           : (h.lock ? '<path class="pad" d="M' + (h.x - 5) + ' ' + (h.y - 1) + 'h10v8h-10zM' + (h.x - 3) + ' ' + (h.y - 1) + 'v-3a3 3 0 0 1 6 0v3"/>' : '<circle class="glint" cx="' + h.x + '" cy="' + h.y + '" r="3"/>')) +
@@ -154,8 +154,9 @@
     const old = document.querySelector('.sheet-wrap'); if (old) old.remove();
     const w = document.createElement('div');
     w.className = 'sheet-wrap';
-    w.innerHTML = '<div class="sheet" role="dialog" aria-modal="true">' + html + '</div>';
+    F.rendre(w, '<div class="sheet" role="dialog" aria-modal="true">' + html + '</div>');
     document.body.appendChild(w);
+    F.histSync();
     w.addEventListener('click', (e) => { if (e.target === w || e.target.closest('[data-sheet=close]')) w.remove(); });
     return w;
   }
@@ -220,7 +221,7 @@
     const sc = S.game._sc;
     if (S.game.stage >= sc.stages.length) {
       return '<main class="screen end">' + '<div class="verdict">' + T('Dossier clos') + '</div><p class="prompt">' + esc(sc.title) + '</p>' +
-        '<div class="intro" style="text-align:left;margin:16px 0">' + sc.ending.map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>' +
+        '<div class="intro gauche my16">' + sc.ending.map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>' +
         '<button class="btn ghost" data-act="leave">' + T('Retour à l\'accueil') + '</button></main>';
     }
     return '<main class="screen" data-screen="player">' + topbar(sc.title, null, '<button class="iconbtn" data-act="leave" aria-label="' + T('Quitter') + '">' + icon('close') + '</button>') +

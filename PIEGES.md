@@ -31,3 +31,9 @@ Chrome identifie une PWA installée par son `id` ; en changer = une autre appli,
 - La CSP est en `<meta>` : Chrome ne repère alors plus les `<script src>` à l'avance et les charge **un par un**. D'où le bloc
   `<link rel="preload" … as="script">` avant `</head>` : **ajouter / renommer un script = mettre aussi à jour sa ligne de préchargement**
   (même adresse exacte, `?v=` compris). Un oubli ne casse rien, il ralentit seulement.
+
+## Audit du 18/11/2026
+- **Plus d'attribut `style="…"` dans le HTML généré** (CSP sans `'unsafe-inline'`, `tests/audit.test.js` et `tests/csp.test.js`) : classe CSS, ou `data-s="…"` rendu par `F.rendre()` ; dans les SVG, attributs de présentation (`fill="…"`) au lieu de `style`.
+- **Toujours passer par `F.rendre()`** pour un nouveau bloc HTML (sinon ni styles `data-s`, ni espaces fines).
+- **Espaces fines** : posées au rendu (`typo()`), pas dans `i18n/strings.json` ni `data/` (les clés françaises restent inchangées, l'Android lit le même fichier).
+- **Serrure** : tout nouveau chemin vers `submit()` passe par le verrou `S.view.verif`.

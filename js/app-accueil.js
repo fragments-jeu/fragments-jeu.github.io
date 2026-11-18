@@ -7,7 +7,7 @@
   SCREENS.home = () => {
     const letters = 'FRAGMENTS'.split('');
     const rot = [-4, 3, -2, 5, -3, 2, -5, 3, -2], dy = [2, -3, 4, -1, 3, -4, 1, -2, 3];
-    const title = letters.map((l, i) => '<span class="scrap' + (i === 4 ? ' red' : '') + '" style="--r:' + rot[i] + 'deg;--dx:0px;--dy:' + dy[i] + 'px;--d:' + (i * 60) + 'ms">' + l + '</span>').join('');
+    const title = letters.map((l, i) => '<span class="scrap' + (i === 4 ? ' red' : '') + '" data-s="--r:' + rot[i] + 'deg;--dx:0px;--dy:' + dy[i] + 'px;--d:' + (i * 60) + 'ms">' + l + '</span>').join('');
     const resume = S.game && !S.game.ended && S.game.role
       ? '<button class="folder alt" data-act="resume"><b>' + T('Reprendre') + '</b><span>' + esc(SCN[S.game.scenarioId] ? SCN[S.game.scenarioId].title : '') + ' — ' + (S.game.role === 'player' ? T('joueur {0}', S.game.playerNo) : S.game.role === 'solo' ? T('mode test') : T('maître du jeu')) + '</span>' + icon('resume') + '</button>'
       : '';
@@ -36,11 +36,11 @@
     const dossiers = S.INDEX.scenarios.filter((s) => !draft.defi || s.id === draft.scenarioId).map((s) => '<button class="dossier" data-theme="' + s.theme + '" data-pick="' + s.id + '" aria-pressed="' + (draft.scenarioId === s.id) + '">' +
       '<span class="seal">' + glyphSvg(THEME_GLYPH[s.theme]) + '</span><b>' + esc(s.title) + '</b><i>' + esc(s.tagline) + '</i><small>' + s.year + ' — ' + T('difficulté') + ' ' + '●'.repeat(s.difficulty) + '○'.repeat(3 - s.difficulty) + '</small></button>').join('');
     const counts = [3, 4, 5, 6].map((n) => '<button data-n="' + n + '" aria-pressed="' + (draft.players === n) + '">' + n + '</button>').join('');
-    const jour = draft.solo && !draft.defi ? '<button class="btn ghost" data-act="daily" style="margin-top:12px">' + icon('daily') + ' ' + T('Dossier du jour #{0}', J.today().n) + '</button>' : '';
+    const jour = draft.solo && !draft.defi ? '<button class="btn ghost mt12" data-act="daily">' + icon('daily') + ' ' + T('Dossier du jour #{0}', J.today().n) + '</button>' : '';
     return '<main class="screen">' + topbar(draft.defi ? T('Dossier du jour #{0}', draft.defi.n) : T(draft.solo ? 'Mode test solo' : 'Nouvelle partie'), 'home') +
-      '<div class="label" style="margin-top:4px">' + T(draft.defi ? 'Scénario du jour, le même pour tous' : 'Scénario') + '</div><div class="dossiers">' + dossiers + '</div>' + jour +
+      '<div class="label mt4">' + T(draft.defi ? 'Scénario du jour, le même pour tous' : 'Scénario') + '</div><div class="dossiers">' + dossiers + '</div>' + jour +
       '<div class="label">' + T(draft.solo ? 'Nombre de joueurs simulés' : 'Nombre de joueurs') + '</div><div class="counter" role="group" aria-label="' + T('Nombre de joueurs') + '">' + counts + '</div>' +
-      '<div class="grow"></div><div style="margin-top:22px"><button class="btn" data-act="doCreate">' + T(draft.solo ? 'Lancer le test' : 'Générer le code') + '</button></div></main>';
+      '<div class="grow"></div><div class="mt22"><button class="btn" data-act="doCreate">' + T(draft.solo ? 'Lancer le test' : 'Générer le code') + '</button></div></main>';
   };
 
   function newGame(role) {
@@ -58,7 +58,7 @@
     '<div class="label">' + T('Code donné par le maître du jeu') + '</div>' +
     '<input class="codefield" data-codein inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BNK-4-XXXX" maxlength="12" value="' + esc(S.view.prefill || '') + '" aria-label="' + T('Code de la partie') + '">' +
     '<div class="err" data-err role="alert"></div>' +
-    ('BarcodeDetector' in window ? '<button class="btn ghost" data-act="scan" style="margin-top:4px">' + icon('scan') + ' ' + T('Scanner le QR') + '</button>' : '<p class="prompt">' + T('Astuce : scannez le QR avec l\'appareil photo du téléphone, la partie s\'ouvre directement.') + '</p>') +
+    ('BarcodeDetector' in window ? '<button class="btn ghost mt4" data-act="scan">' + icon('scan') + ' ' + T('Scanner le QR') + '</button>' : '<p class="prompt">' + T('Astuce : scannez le QR avec l\'appareil photo du téléphone, la partie s\'ouvre directement.') + '</p>') +
     '<div data-seat></div><div class="grow"></div></main>';
   AFTER.join = () => {
     const inp = $app.querySelector('[data-codein]');
@@ -75,9 +75,9 @@
       if (!sc) { err.textContent = T('Ce scénario n\'est pas installé sur ce téléphone.'); seat.innerHTML = ''; return; }
       err.textContent = '';
       inp.value = d.code;
-      seat.innerHTML = '<div class="label">' + T('{0} — quel joueur êtes-vous ?', esc(sc.title)) + '</div><div class="counter" style="grid-template-columns:repeat(' + Math.min(d.players, 6) + ',1fr)">' +
+      F.rendre(seat, '<div class="label">' + T('{0} — quel joueur êtes-vous ?', esc(sc.title)) + '</div><div class="counter" data-s="grid-template-columns:repeat(' + Math.min(d.players, 6) + ',1fr)">' +
         [...Array(d.players)].map((_, i) => '<button data-seatn="' + (i + 1) + '">' + (i + 1) + '</button>').join('') + '</div>' +
-        '<p class="prompt" style="margin-top:10px">' + T('Chaque joueur doit prendre un numéro différent.') + '</p>';
+        '<p class="prompt mt10">' + T('Chaque joueur doit prendre un numéro différent.') + '</p>');
       S.view.decoded = d;
     };
     inp.addEventListener('input', check);
@@ -90,7 +90,7 @@
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     } catch (e) { toast(T('Caméra indisponible')); return; }
-    const o = overlay('<h3>' + T('Scanner') + '</h3><video playsinline muted style="width:100%;border-radius:10px;background:#000"></video><button class="btn ghost" data-o="x" style="margin-top:12px">' + T('Annuler') + '</button>', () => { stop(); });
+    const o = overlay('<h3>' + T('Scanner') + '</h3><video class="scan-video" playsinline muted></video><button class="btn ghost mt12" data-o="x">' + T('Annuler') + '</button>', () => { stop(); });
     const video = o.querySelector('video'); video.srcObject = stream; await video.play();
     const det = new window.BarcodeDetector({ formats: ['qr_code'] });
     let alive = true;
@@ -109,10 +109,11 @@
     langRow() +
     '<div class="toggle"><span>' + T('Son') + '<small>' + T('Ambiance et signaux générés en direct') + '</small></span><button class="switch" role="switch" data-set="sound" aria-checked="' + settings.sound + '" aria-label="' + T('Son') + '"></button></div>' +
     '<div class="toggle"><span>' + T('Vibrations') + '<small>' + T('Retour au toucher et aux réponses') + '</small></span><button class="switch" role="switch" data-set="vibrate" aria-checked="' + settings.vibrate + '" aria-label="' + T('Vibrations') + '"></button></div>' +
-    '<div class="toggle"><span>' + T('Partie en cours') + '<small>' + T(S.game && !S.game.ended ? 'Une partie est sauvegardée sur ce téléphone' : 'Aucune') + '</small></span><button class="btn danger" data-act="wipe" style="min-height:44px;font-size:17px" ' + (S.game ? '' : 'disabled') + '>' + T('Effacer') + '</button></div>' +
-    '<p class="prompt" style="margin-top:20px">' + T('Fragments fonctionne sans connexion. Les parties restent sur ce téléphone.') + '</p>' +
+    '<div class="toggle"><span>' + T('Mouvement réduit') + '<small>' + T('Coupe secousses, tampons et rebonds') + '</small></span><button class="switch" role="switch" data-set="motion" aria-checked="' + !!settings.motion + '" aria-label="' + T('Mouvement réduit') + '"></button></div>' +
+    '<div class="toggle"><span>' + T('Partie en cours') + '<small>' + T(S.game && !S.game.ended ? 'Une partie est sauvegardée sur ce téléphone' : 'Aucune') + '</small></span><button class="btn danger compact" data-act="wipe" ' + (S.game ? '' : 'disabled') + '>' + T('Effacer') + '</button></div>' +
+    '<p class="prompt mt20">' + T('Fragments fonctionne sans connexion. Les parties restent sur ce téléphone.') + '</p>' +
     window.FragAutresJeux.html(T) +
-    '<p class="prompt"><a class="legal" href="privacy.html' + (I.lang === 'en' ? '#en' : '') + '">' + T('Confidentialité, conditions et mentions légales') + '</a></p></main>';
+    '<p class="prompt"><a class="legal lien-legal" href="privacy.html' + (I.lang === 'en' ? '#en' : '') + '">' + T('Confidentialité, conditions et mentions légales') + '</a></p></main>';
   const langRow = () => '<div class="toggle"><span>' + T('Langue') + '<small>' + T('Interface et scénarios') + '</small></span><div class="langs" role="group" aria-label="' + T('Langue') + '">' +
     [['fr', 'FR'], ['en', 'EN']].map(([l, n]) => '<button data-lang="' + l + '" aria-pressed="' + (I.lang === l) + '" lang="' + l + '">' + n + '</button>').join('') + '</div></div>';
 

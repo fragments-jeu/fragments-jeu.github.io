@@ -30,7 +30,7 @@
         const worn = b.worn.indexOf(k) >= 0;
         o += '<rect x="' + x + '" y="' + y + '" width="58" height="54" rx="8" fill="' + (worn ? '#a39a86' : '#cfcbbf') + '" />';
         if (worn) o += '<ellipse cx="' + (x + 29) + '" cy="' + (y + 30) + '" rx="20" ry="15" fill="#6e6655" opacity=".55"/>';
-        o += T(x + 29, y + 38, k, 26, 'font-family="Stencil" font-weight="900" fill="' + (worn ? '#4a4436' : '#2b2b28') + '" style="fill:' + (worn ? '#4a4436' : '#2b2b28') + '"');
+        o += T(x + 29, y + 38, k, 26, 'font-family="Stencil" font-weight="900" fill="' + (worn ? '#4a4436' : '#2b2b28') + '"');
       });
       return svg(240, 300, o, tr('Clavier à codes : touches usées {0}', b.worn.join(', ')));
     },
@@ -71,7 +71,7 @@
           const a = (-225 + (270 * d.value) / b.max) * Math.PI / 180;
           o += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + Math.cos(a) * 30) + '" y2="' + (cy + Math.sin(a) * 30) + '" stroke="#b8322a" stroke-width="3" stroke-linecap="round"/>';
         } else {
-          o += T(cx, cy + 6, '?', 18, 'font-family="Stencil" font-weight="900" style="fill:#b8322a"');
+          o += T(cx, cy + 6, '?', 18, 'font-family="Stencil" font-weight="900" fill="#b8322a"');
         }
         o += '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#2c2c28"/>';
         if (d.color) o += '<circle cx="' + cx + '" cy="' + (cy + 52) + '" r="6" fill="' + LAMP[d.color] + '"/>';
@@ -117,11 +117,11 @@
       return svg(5 * cw + 8, b.rows.length * rh + 6, o, tr('Pupitre de voyants (lettres : R rouge, V vert, B bleu, A ambre ; point : éteint)'));
     },
     ticketstub(b) {
-      return '<div class="stub" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:6px 0 12px;font-family:var(--f-stencil);font-weight:900;text-align:center">' +
-        '<div><div style="font:13px var(--f-type)">' + tr('DÉPART') + '</div><div style="font-size:40px;letter-spacing:.06em">' + esc(b.from) + '</div></div>' +
-        '<div style="font-size:26px">→</div>' +
-        '<div><div style="font:13px var(--f-type)">' + tr('ARRIVÉE') + '</div><div style="font-size:40px;letter-spacing:.06em">' + esc(b.to) + '</div></div>' +
-        '<div style="grid-column:1/-1;display:flex;justify-content:space-around;border-top:1px dashed #a2874d;padding-top:8px;font:700 15px var(--f-type)">' +
+      return '<div class="stub">' +
+        '<div><div class="stub-k">' + tr('DÉPART') + '</div><div class="stub-v">' + esc(b.from) + '</div></div>' +
+        '<div class="stub-fl">→</div>' +
+        '<div><div class="stub-k">' + tr('ARRIVÉE') + '</div><div class="stub-v">' + esc(b.to) + '</div></div>' +
+        '<div class="stub-pied">' +
         '<span>' + tr('Classe {0}', esc(b.cls)) + '</span><span>' + tr('Voiture {0}', esc(b.car)) + '</span><span>' + tr('Place {0}', esc(b.seat)) + '</span></div></div>';
     },
     carriage(b) {

@@ -10,7 +10,7 @@
   // ---------- état (partagé entre les modules ; seules ces 4 valeurs sont réassignées) ----------
   const S = { INDEX: null, game: null, view: { name: 'home' }, tickTimer: null };
   const SCN = {};
-  const settings = load(LS_SET) || { sound: true, vibrate: true };
+  const settings = load(LS_SET) || { sound: true, vibrate: true, motion: false };
   S.game = load(LS_GAME); // partie en cours (hôte, joueur ou solo)
   let wakeLock = null;
 
@@ -19,6 +19,41 @@
   const saveGame = () => save(LS_GAME, S.game ? plain(S.game) : null);
   const buzz = (p) => { if (settings.vibrate && navigator.vibrate) navigator.vibrate(p); };
   A.setEnabled(settings.sound);
+  // « Mouvement réduit » des Réglages : mêmes effets que la préférence du système (classe rm sur <html>, voir css/extras.css)
+  const applyMotion = () => document.documentElement.classList.toggle('rm', !!settings.motion);
+  applyMotion();
+
+  // ---------- rendu du HTML généré ----------
+  // CSP sans 'unsafe-inline' : aucun attribut style dans le HTML généré ; les valeurs variables passent par data-s puis le CSSOM.
+  function styler(root) { root.querySelectorAll('[data-s]').forEach((el) => { el.style.cssText = el.getAttribute('data-s'); el.removeAttribute('data-s'); }); }
+  // Typographie française : espace fine insécable (U+202F) avant ? ! ; : (plus de « ? » seul en début de ligne).
+  // Les champs, codes, mots de passage et textes partagés ne sont pas touchés.
+  const FINE = / (?=[?!;:](?:\s|$|[»)]))/g;
+  function typo(root) {
+    if (I.lang !== 'fr') return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = w.nextNode())) {
+      if (!FINE.test(n.nodeValue)) continue;
+      FINE.lastIndex = 0;
+      const p = n.parentElement;
+      if (p && p.closest('textarea, input, [data-code], [data-word], [data-share], .share-ta')) continue;
+      n.nodeValue = n.nodeValue.replace(FINE, '\u202F');
+    }
+  }
+  function rendre(el, html) { el.innerHTML = html; styler(el); typo(el); return el; }
+
+  // ---------- bouton Retour du téléphone (même schéma dans les 4 jeux) ----------
+  // Une entrée d'historique tant qu'on n'est pas sur l'accueil nu ; le Retour lui-même est géré dans app.js (boutonRetour).
+  const hist = { pose: false, retour: false };
+  const horsAccueil = () => S.view.name !== 'home' || !!document.querySelector('.overlay, .sheet-wrap');
+  function histSync() {
+    if (hist.retour) return; // history.back() en cours : la popstate rappellera histSync
+    const hors = horsAccueil();
+    if (hors && !hist.pose) { try { history.pushState({ fragments: 1 }, ''); hist.pose = true; } catch (e) { /* rien */ } }
+    else if (!hors && hist.pose) { hist.pose = false; hist.retour = true; try { history.back(); } catch (e) { hist.retour = false; } }
+  }
+  document.addEventListener('click', () => histSync()); // après les écouteurs des boutons (fermeture d'une fenêtre comprise)
 
   // ---------- icônes ----------
   const IC = {
@@ -96,17 +131,19 @@
     const theme = S.game && S.game.scenarioId && ['host', 'player', 'solo', 'end', 'lobby'].includes(name) ? S.game.scenarioId : (S.view.theme || '');
     document.body.dataset.theme = theme;
     const fn = SCREENS[name] || SCREENS.home;
-    $app.innerHTML = fn();
+    rendre($app, fn());
     window.scrollTo(0, 0);
     if (AFTER[name]) AFTER[name]();
+    histSync();
   }
   function toast(msg) {
-    const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg;
+    const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; typo(t);
     document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
   }
   function overlay(html, onClick) {
-    const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = '<div class="card" role="dialog" aria-modal="true">' + html + '</div>';
+    const o = document.createElement('div'); o.className = 'overlay'; rendre(o, '<div class="card" role="dialog" aria-modal="true">' + html + '</div>');
     document.body.appendChild(o);
+    histSync();
     o.addEventListener('click', (e) => { const b = e.target.closest('[data-o]'); if (b) { const r = onClick(b.dataset.o, o); if (r !== false) o.remove(); } });
     const f = o.querySelector('button'); if (f) f.focus();
     return o;
@@ -117,5 +154,5 @@
   const SCREENS = {};
   const AFTER = {};
 
-  window.FragApp = { E, $app, esc, cap, LS_GAME, S, SCN, settings, load, save, saveGame, buzz, IC, icon, glyphSvg, THEME_GLYPH, loadData, byPrefix, hydrate, plain, JEU, dailyOf, flame, days, untilMidnight, elapsed, remaining, keepAwake, go, toast, overlay, topbar, SCREENS, AFTER, D, A, Q, J, I, T, TN, LS_SET };
+  window.FragApp = { styler, typo, rendre, hist, histSync, applyMotion, E, $app, esc, cap, LS_GAME, S, SCN, settings, load, save, saveGame, buzz, IC, icon, glyphSvg, THEME_GLYPH, loadData, byPrefix, hydrate, plain, JEU, dailyOf, flame, days, untilMidnight, elapsed, remaining, keepAwake, go, toast, overlay, topbar, SCREENS, AFTER, D, A, Q, J, I, T, TN, LS_SET };
 })();

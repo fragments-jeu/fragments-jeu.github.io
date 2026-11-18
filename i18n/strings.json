@@ -211,6 +211,11 @@
   "Partager": "Share",
   "Étagère de livres numérotés": "Shelf of numbered books",
   "Image impossible à créer sur ce téléphone": "This phone can't create the image",
-  "Scanner indisponible : tapez le code": "Scanner unavailable: type the code"
+  "Scanner indisponible : tapez le code": "Scanner unavailable: type the code",
+  "Recommencer": "Restart",
+  "Menu": "Menu",
+  "Le chrono est arrêté.": "The clock is stopped.",
+  "Mouvement réduit": "Reduced motion",
+  "Coupe secousses, tampons et rebonds": "No shaking, stamps or bouncing"
  }
 }
